@@ -12,4 +12,20 @@ public class Person{
         this.address = address;
         this.email = email;
     }
+
+    public getName(){
+        return this.name;
+    }
+    
+    public getAge(){
+        return this.age;
+    }
+
+    public getName(){
+        return this.name;
+    }
+
+    public getName(){
+        return this.name;
+    }
 }
