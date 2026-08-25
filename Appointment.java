@@ -1,5 +1,5 @@
 public class Appointment{
-    private int appointmentId;
+    private String appointmentId;
     private Patient patient;
     private Doctor doctor;
     private LocalDate date;
@@ -20,10 +20,48 @@ public class Appointment{
         this.doctor = doctor;
         this.date = date;
         this.time = time;
-        this.status = "Scheduled"
+        this.status = "Scheduled";
     }
 
-    //methods
+    //getter methods
 
+    public String getAppointmentId(){
+        return this.appointmentId;
+    }
+
+    public Patient getPatient(){
+        return this.patient;
+    }
+
+    public Doctor getDoctor(){
+        return this.doctor;
+    }
+
+    public LocalDate getDate(){
+        return this.date;
+    }
+
+    public LocalTime getTime(){
+        return this.time;
+    }
+
+    public String getStatus(){
+        return this.status;
+    }
+
+    // Appointment methods
+
+    public void cancelAppointment(){
+        this.status = "Cancelled";
+    }
+
+    public void rescheduleAppointment(LocalDate date, LocalTime time){
+        this.date = date;
+        this.time = time;
+    }
+
+    public void completeAppointment(){
+        this.status = "Completed";
+    }
     
 }

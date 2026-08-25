@@ -39,23 +39,23 @@ public class Person{
 
     //setters
 
-    public String setName(String name){
+    public void setName(String name){
         this.name = name;
     }
     
-    public int setAge(int age){
+    public void setAge(int age){
         this.age = age;
     }
 
-    public String setPhone(String phone){
+    public void setPhone(String phone){
         this.phone = phone;
     }
 
-    public String setAddress(String address){
+    public void setAddress(String address){
         this.address = address;
     }
 
-    public String setEmail(String email){
+    public void setEmail(String email){
         this.email = email;
     }
 }
