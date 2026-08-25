@@ -38,6 +38,7 @@
 
 ### Additional Methods
 
+- getPatientId() : int 
 - ...
 
 ---
