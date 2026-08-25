@@ -56,6 +56,71 @@
 - appointmentId : int
 - patient : Patient
 - doctor : Doctor
-- date : ...
-- time : ...
+- date : LocalDate
+- time : LocalTime
 - status : String
+
+### Methods
+- getAppointmentId()
+- getPatient()
+- getDoctor()
+- getDate()
+- getTime()
+- getStatus()
+- setPatient()
+- setDoctor()
+- setDate()
+- setTime()
+- setStatus()
+- cancel()
+- reschedule()
+- complete()
+
+---
+
+## Consultation
+
+### Attributes
+- consultationId : int
+- patient : Patient
+- doctor : Doctor
+- date : String
+- diagnosis : String
+- notes : String
+- prescription : Prescription
+
+### Methods
+- getConsultationId()
+- getPatient()
+- getDoctor()
+- getDate()
+- getDiagnosis()
+- getNotes()
+- getPrescription()
+
+- setDiagnosis()
+- setNotes()
+- setPrescription()
+
+---
+
+## Billing
+
+## Attributes
+- billId : int
+- patient : Patient
+- consultation : Consultation
+- amount : double
+- date : String
+- status : String
+
+Methods:
+- getBillId()
+- getPatient()
+- getConsultation()
+- getAmount()
+- getDate()
+- getStatus()
+
+- setStatus()
+- markAsPaid()
