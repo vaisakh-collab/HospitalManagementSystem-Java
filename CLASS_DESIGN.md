@@ -39,7 +39,9 @@
 ### Additional Methods
 
 - getPatientId() : int 
-- ...
+- viewMedicalHistory() : List\<Consultation>
+- viewAppointments() : List\<Appointment>
+- viewPrescriptions() : List\<Prescription>
 
 ---
 
