@@ -1,5 +1,26 @@
 # Class Design
 
+## HospitalManagementSystem
+
+### Attributes
+- patients : List<Patient>
+- doctors : List<Doctor>
+- appointments : List<Appointment>
+- consultations : List<Consultation>
+- bills : List<Billing>
+- prescriptions : List<Prescription>
+
+### Methods
+- addPatient()
+- addDoctor()
+- bookAppointment()
+- cancelAppointment()
+- createConsultation()
+- createPrescription()
+- generateBill()
+- findPatient()
+- findDoctor()
+
 ## Person
 
 ### Attributes
