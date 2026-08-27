@@ -58,6 +58,7 @@
 - nextId : static int
 
 > **Note:** `nextId` is used internally to generate unique patient IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
 
 ### Additional Methods
 
@@ -71,6 +72,8 @@
 
 - viewPrescriptions() : List\<Prescription>
   - Returns the patient's prescriptions as a list of prescriptions.
+
+> **Note:** YET TO CONSIDER HOW THESE DATA ARE STORED AND ACCESSED
 
 ---
 
@@ -87,6 +90,7 @@
 - nextId : static int
 
 > **Note:** `nextId` is used internally to generate unique doctor IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
 
 ### Additional Methods
 
@@ -95,6 +99,7 @@
 - setSpecialization() : void
 - viewAppointments() : List<Appointment>
   - Returns the doctor's appointments as a list of appointments.
+> **Note:** YET TO CONSIDER HOW THIS DATA IS STORED AND ACCESSED
 
 ---
 
@@ -108,9 +113,11 @@
 - date : LocalDate
 - time : LocalTime
 - status : String
+> **Note:** Consider an ENUM instead of String in case status needs to be inspected
 - nextId : static int
 
 > **Note:** `nextId` is used internally to generate unique appointment IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
 
 ### Methods
 
@@ -141,13 +148,15 @@
 - nextId : static int
 
 > **Note:** `nextId` is used internally to generate unique consultation IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
 
 ### Methods
 
 - getConsultationId() : int
 - getPatient() : Patient
 - getDoctor() : Doctor
-- getDate() : String
+- getDate() : LocalDate
+- getTime() : LocalTime
 - getDiagnosis() : String
 - getNotes() : String
 - getPrescription() : Prescription
@@ -167,6 +176,7 @@
 - amount : double
 - date : String
 - status : String
+> **Note:** Consider an ENUM instead of String in case status needs to be inspected
 
 ### Methods
 
@@ -181,13 +191,13 @@
 
 ---
 
-### Prescription
+## Prescription
 
 #### Attributes
 
 - prescriptionId : int
-- patientId : int
-- doctorId : int
+- patient : Patient
+- doctor : Doctor
 - consultationId : int
 - medication : String
 - dosage : String
@@ -198,8 +208,8 @@
 #### Methods
 
 - getPrescriptionId() : int
-- getPatientId() : int
-- getDoctorId() : int
+- getPatient() : Patient
+- getDoctor() : Doctor
 - getConsultationId() : int
 - getMedication() : String
 - getDosage() : String
