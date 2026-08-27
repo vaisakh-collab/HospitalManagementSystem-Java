@@ -54,7 +54,7 @@
 
 ### Additional Attributes
 
-- patientId : int
+- patientId : String
 - nextId : static int
 
 > **Note:** `nextId` is used internally to generate unique patient IDs.
@@ -62,7 +62,7 @@
 
 ### Additional Methods
 
-- getPatientId() : int
+- getPatientId() : String
 
 - viewMedicalHistory() : List\<Consultation>
   - Returns the patient's medical history as a list of consultations.
@@ -85,7 +85,7 @@
 
 ### Additional Attributes
 
-- doctorId : int
+- doctorId : String
 - specialization : String
 - nextId : static int
 
@@ -94,7 +94,7 @@
 
 ### Additional Methods
 
-- getDoctorId() : int
+- getDoctorId() : String
 - getSpecialization() : String
 - setSpecialization() : void
 - viewAppointments() : List<Appointment>
@@ -137,7 +137,7 @@
 
 ### Attributes
 
-- consultationId : int
+- consultationId : String
 - patient : Patient
 - doctor : Doctor
 - date : LocalDate
@@ -152,7 +152,7 @@
 
 ### Methods
 
-- getConsultationId() : int
+- getConsultationId() : String
 - getPatient() : Patient
 - getDoctor() : Doctor
 - getDate() : LocalDate
@@ -170,21 +170,25 @@
 
 ### Attributes
 
-- billId : int
+- billId : String
 - patient : Patient
 - consultation : Consultation
 - amount : double
-- date : String
+- date : LocalDate
 - status : String
 > **Note:** Consider an ENUM instead of String in case status needs to be inspected
 
+- nextId : static int
+> **Note:** `nextId` is used internally to generate unique billing IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
+
 ### Methods
 
-- getBillId() : int
+- getBillId() : String
 - getPatient() : Patient
 - getConsultation() : Consultation
 - getAmount() : double
-- getDate() : String
+- getDate() : LocalDate
 - getStatus() : String
 - setStatus() : void
 - markAsPaid() : void
@@ -195,22 +199,24 @@
 
 #### Attributes
 
-- prescriptionId : int
+- prescriptionId : String
 - patient : Patient
 - doctor : Doctor
-- consultationId : int
 - medication : String
 - dosage : String
 - frequency : String
 - duration : String
 - instructions : String
 
+- nextId : static int
+> **Note:** `nextId` is used internally to generate unique prescription IDs.
+> **Note:** Need to consider persistence of IDs during File Handling
+
 #### Methods
 
-- getPrescriptionId() : int
+- getPrescriptionId() : String
 - getPatient() : Patient
 - getDoctor() : Doctor
-- getConsultationId() : int
 - getMedication() : String
 - getDosage() : String
 - getFrequency() : String
