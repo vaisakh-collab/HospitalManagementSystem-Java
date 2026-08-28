@@ -11,9 +11,10 @@
 - prescriptions : List<Prescription>
 
 ### Methods
-- addPatient()
-- addDoctor()
+- addPatient(patient : Patient)
+- addDoctor(doctor : Doctor)
 - bookAppointment()
+> WHAT???????
 - cancelAppointment()
 - createConsultation()
 - createPrescription()
@@ -34,15 +35,15 @@
 ### Methods
 
 - getName() : String
-- setName() : void
+- setName(name : String) : void
 - getAge() : int
-- setAge() : void
+- setAge(age : int) : void
 - getPhone() : String
-- setPhone() : void
+- setPhone(phone : String) : void
 - getAddress() : String
-- setAddress() : void
+- setAddress(address : String) : void
 - getEmail() : String
-- setEmail() : void
+- setEmail(email : String) : void
 
 ---
 
@@ -96,10 +97,12 @@
 
 - getDoctorId() : String
 - getSpecialization() : String
-- setSpecialization() : void
+- setSpecialization(specialization : String) : void
 - viewAppointments() : List<Appointment>
   - Returns the doctor's appointments as a list of appointments.
 > **Note:** YET TO CONSIDER HOW THIS DATA IS STORED AND ACCESSED
+- isAvailable(requestedDate : LocalDate, requestedTime : LocalTime) : boolean
+> Checks the appointments of the doctor assuming each to be of duration 20 min, and returns True if there is no overlap,
 
 ---
 
@@ -128,7 +131,7 @@
 - getTime() : LocalTime
 - getStatus() : String
 - cancelAppointment() : void
-- rescheduleAppointment() : void
+- rescheduleAppointment(date : LocalDate, time: LocalTime) : void
 - completeAppointment() : void
 
 ---
@@ -160,9 +163,9 @@
 - getDiagnosis() : String
 - getNotes() : String
 - getPrescription() : Prescription
-- setDiagnosis() : void
-- setNotes() : void
-- setPrescription() : void
+- setDiagnosis(diagnosis : String) : void
+- setNotes(notes : String) : void
+- setPrescription(prescription : Prescription) : void
 
 ---
 
@@ -175,6 +178,7 @@
 - consultation : Consultation
 - amount : double
 - date : LocalDate
+- time : LocalTime
 - status : String
 > **Note:** Consider an ENUM instead of String in case status needs to be inspected
 
@@ -189,8 +193,8 @@
 - getConsultation() : Consultation
 - getAmount() : double
 - getDate() : LocalDate
+- getTime() : LocalTime
 - getStatus() : String
-- setStatus() : void
 - markAsPaid() : void
 
 ---
@@ -222,8 +226,8 @@
 - getFrequency() : String
 - getDuration() : String
 - getInstructions() : String
-- setMedication() : void
-- setDosage() : void
-- setFrequency() : void
-- setDuration() : void
-- setInstructions() : void
+- setMedication(medication : String) : void
+- setDosage(dosage : String) : void
+- setFrequency(frequency : String) : void
+- setDuration(duration : String) : void
+- setInstructions(instructions : String) : void
