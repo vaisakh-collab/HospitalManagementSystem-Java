@@ -73,17 +73,4 @@ public class Consultation {
         this.prescription = prescription;
     }
 
-    public void displayConsultation() {
-
-        System.out.println("\n===== Consultation Details =====");
-
-        System.out.println("Consultation ID : " + consultationId);
-        System.out.println("Patient         : " + patient);
-        System.out.println("Doctor          : " + doctor);
-        System.out.println("Date            : " + date);
-        System.out.println("Time            : " + time);
-        System.out.println("Diagnosis       : " + diagnosis);
-        System.out.println("Notes           : " + notes);
-        System.out.println("Prescription    : " + prescription);
-    }
 }
