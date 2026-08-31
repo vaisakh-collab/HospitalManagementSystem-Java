@@ -1,10 +1,10 @@
 import java.util.List;
 public class Patient extends Person {
-  private string patientId;
+  private String patientId;
   private static int nextId = 1;
   public Patient(String name, int age, String phone, String address, String email){
     super(name, age, phone, address, email);
-    this.patienId = "P" + nextId;
+    this.patientId = "P" + nextId;
     nextId++;
   }
 
