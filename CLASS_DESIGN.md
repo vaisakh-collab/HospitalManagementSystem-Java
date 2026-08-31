@@ -98,7 +98,7 @@
 - getDoctorId() : String
 - getSpecialization() : String
 - setSpecialization(specialization : String) : void
-- viewAppointments() : List<Appointment>
+- viewAppointments() : List\<Appointment>
   - Returns the doctor's appointments as a list of appointments.
 > **Note:** YET TO CONSIDER HOW THIS DATA IS STORED AND ACCESSED
 - isAvailable(requestedDate : LocalDate, requestedTime : LocalTime) : boolean
