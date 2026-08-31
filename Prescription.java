@@ -1,16 +1,16 @@
-public classs Prescription{
-  private String prescriptionid;
-  private Pateient patient;
+public class Prescription{
+  private String prescriptionId;
+  private Patient patient;
   private Doctor doctor;
   private String medication;
   private String dosage;
   private String frequency;
   private String duration;
   private String instructions;
-  private static int nexid=1;
+  private static int nextId=1;
 
-  public prescription(Patient patient, Doctor doctor; String medication, String dosage, String frequency, String duration, String instructions){
-    this.prescriptionid="P"+nextid++;
+  public Prescription(Patient patient, Doctor doctor, String medication, String dosage, String frequency, String duration, String instructions){
+    this.prescriptionId="P"+nextId++;
     this.patient=patient;
     this.doctor= doctor;
     this.medication = medication;
@@ -18,6 +18,7 @@ public classs Prescription{
     this.frequency = frequency;
     this.duration = duration;
     this.instructions = instructions;
+  }
  public String getPrescriptionId() {
         return prescriptionId;
    }
