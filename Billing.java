@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 
-public class Bill {
+public class Billing {
 
     private String billId;
     private Patient patient;
@@ -13,7 +13,7 @@ public class Bill {
     private static int nextId = 1;
 
     // Constructor
-    public Bill(Patient patient, Consultation consultation,
+    public Billing (Patient patient, Consultation consultation,
                 double amount, LocalDate date, String status) {
 
         this.billId = String.format("B%03d", nextId++);
