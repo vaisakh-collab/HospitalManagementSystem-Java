@@ -11,6 +11,16 @@ CREATE TABLE Patient (
     email VARCHAR(100)
 );
 
+CREATE TABLE Doctor (
+    doctor_id VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    phone VARCHAR(100),
+    address VARCHAR(100),
+    email VARCHAR(100)
+    specialization VARCHAR(20)s
+)
+
 CREATE TABLE Prescription (
     prescription_id VARCHAR(50) PRIMARY KEY,
     patient_id VARCHAR(50),
