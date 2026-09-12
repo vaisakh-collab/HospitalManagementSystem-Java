@@ -17,9 +17,9 @@ CREATE TABLE Doctor (
     age INT,
     phone VARCHAR(100),
     address VARCHAR(100),
-    email VARCHAR(100)
-    specialization VARCHAR(20)s
-)
+    email VARCHAR(100),
+    specialization VARCHAR(20)
+);
 
 CREATE TABLE Prescription (
     prescription_id VARCHAR(50) PRIMARY KEY,
@@ -47,28 +47,11 @@ CREATE TABLE Appointment (
     FOREIGN KEY (doctor_id) REFERENCES Doctor(doctor_id)
 );
 
-CREATE TABLE Billing (
-    bill_id VARCHAR(50) PRIMARY KEY,
-    patient_id VARCHAR(50),
-    consultation_id VARCHAR(50),
-    amount DECIMAL(10,2),
-    date DATE,
-    time TIME,
-    status VARCHAR(50),
-
-    CONSTRAINT fk_billing_patient
-        FOREIGN KEY (patient_id)
-        REFERENCES Patient(patient_id),
-
-    CONSTRAINT fk_billing_consultation
-        FOREIGN KEY (consultation_id)
-        REFERENCES Consultation(consultation_id)
-);
 
 CREATE TABLE Consultation (
     consultation_id VARCHAR(20) PRIMARY KEY,
-    patient_id VARCHAR(20) NOT NULL,
-    doctor_id VARCHAR(20) NOT NULL,
+    patient_id VARCHAR(10) NOT NULL,
+    doctor_id VARCHAR(10) NOT NULL,
     consultation_date DATE NOT NULL,
     consultation_time TIME NOT NULL,
     diagnosis TEXT,
@@ -86,4 +69,21 @@ CREATE TABLE Consultation (
     CONSTRAINT fk_consultation_prescription
         FOREIGN KEY (prescription_id)
         REFERENCES prescription(prescription_id)
+);
+CREATE TABLE Billing (
+    bill_id VARCHAR(50) PRIMARY KEY,
+    patient_id VARCHAR(50),
+    consultation_id VARCHAR(50),
+    amount DECIMAL(10,2),
+    date DATE,
+    time TIME,
+    status VARCHAR(50),
+
+    CONSTRAINT fk_billing_patient
+        FOREIGN KEY (patient_id)
+        REFERENCES Patient(patient_id),
+
+    CONSTRAINT fk_billing_consultation
+        FOREIGN KEY (consultation_id)
+        REFERENCES Consultation(consultation_id)
 );
