@@ -22,7 +22,7 @@ CREATE TABLE Doctor (
 );
 
 CREATE TABLE Prescription (
-    prescription_id VARCHAR(50) PRIMARY KEY,
+    prescription_id VARCHAR(10) PRIMARY KEY,
     patient_id VARCHAR(50),
     doctor_id VARCHAR(50),
     medication VARCHAR(100),
@@ -36,7 +36,7 @@ CREATE TABLE Prescription (
 );
 
 CREATE TABLE Appointment (
-    appointment_id VARCHAR(50) PRIMARY KEY,
+    appointment_id VARCHAR(10) PRIMARY KEY,
     patient_id VARCHAR(50),
     doctor_id VARCHAR(50),
     date DATE,
@@ -49,7 +49,7 @@ CREATE TABLE Appointment (
 
 
 CREATE TABLE Consultation (
-    consultation_id VARCHAR(20) PRIMARY KEY,
+    consultation_id VARCHAR(10) PRIMARY KEY,
     patient_id VARCHAR(10) NOT NULL,
     doctor_id VARCHAR(10) NOT NULL,
     consultation_date DATE NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE Consultation (
         REFERENCES prescription(prescription_id)
 );
 CREATE TABLE Billing (
-    bill_id VARCHAR(50) PRIMARY KEY,
+    bill_id VARCHAR(10) PRIMARY KEY,
     patient_id VARCHAR(50),
     consultation_id VARCHAR(50),
     amount DECIMAL(10,2),
