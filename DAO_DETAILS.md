@@ -22,9 +22,10 @@ The DAOs use `DatabaseConnection` to obtain a JDBC connection and should not con
 
 ### Method
 
-- getConnection(password : String) : Connection
-  - Establishes and returns a connection to the database.
-  - Throws `SQLException` if the connection cannot be established.
+- getConnection() : Connection
+  - Establishes and returns a connection to the database using the credentials stored in the local `config.properties` file.
+  - Throws `SQLException` if a database connection error occurs.
+  - Throws `IOException` if the configuration file cannot be read.
 
 ---
 
