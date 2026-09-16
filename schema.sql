@@ -23,8 +23,8 @@ CREATE TABLE Doctor (
 
 CREATE TABLE Prescription (
     prescription_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(50),
-    doctor_id VARCHAR(50),
+    patient_id VARCHAR(10),
+    doctor_id VARCHAR(10),
     medication VARCHAR(100),
     dosage VARCHAR(100),
     frequency VARCHAR(100),
@@ -37,8 +37,8 @@ CREATE TABLE Prescription (
 
 CREATE TABLE Appointment (
     appointment_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(50),
-    doctor_id VARCHAR(50),
+    patient_id VARCHAR(10),
+    doctor_id VARCHAR(10),
     date DATE,
     time TIME,
     status VARCHAR(50),
@@ -56,7 +56,8 @@ CREATE TABLE Consultation (
     consultation_time TIME NOT NULL,
     diagnosis TEXT,
     notes TEXT,
-    prescription_id VARCHAR(20),
+    prescription_id VARCHAR(10),
+    UNIQUE(prescription_id),
 
     CONSTRAINT fk_consultation_patient
         FOREIGN KEY (patient_id)
@@ -72,8 +73,8 @@ CREATE TABLE Consultation (
 );
 CREATE TABLE Billing (
     bill_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(50),
-    consultation_id VARCHAR(50),
+    patient_id VARCHAR(10),
+    consultation_id VARCHAR(10),
     amount DECIMAL(10,2),
     date DATE,
     time TIME,
