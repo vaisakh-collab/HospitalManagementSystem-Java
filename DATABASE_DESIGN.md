@@ -51,6 +51,7 @@
 - time : TIME
 - diagnosis : VARCHAR
 - notes : VARCHAR
+- prescription_id : VARCHAR (Foreign Key → Prescription.prescription_id, UNIQUE)
 
 ---
 
