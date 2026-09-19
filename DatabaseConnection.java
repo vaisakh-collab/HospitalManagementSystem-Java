@@ -24,6 +24,11 @@ public class DatabaseConnection {
         String user = properties.getProperty("DB_USER");
         String password = properties.getProperty("DB_PASSWORD");
 
+        /*
+        Connection conn = DriverManager.getConnection(URL, user, password);
+        return conn;
+        */
+
         return DriverManager.getConnection(URL, user, password);
     }
 }
