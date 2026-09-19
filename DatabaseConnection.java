@@ -17,13 +17,13 @@ public class DatabaseConnection {
         Properties properties = new Properties();
 
         try (FileInputStream file = new FileInputStream("config.properties")) {
-            
+
             properties.load(file);
         }
 
         String user = properties.getProperty("DB_USER");
         String password = properties.getProperty("DB_PASSWORD");
-
+        
         return DriverManager.getConnection(URL, user, password);
     }
 }
