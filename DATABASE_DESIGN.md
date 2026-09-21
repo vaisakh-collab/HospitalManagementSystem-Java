@@ -4,7 +4,7 @@
 
 ### Columns
 
-- patient_id : VARCHAR (Primary Key)
+- patient_id : INT (Primary Key, AUTO_INCREMENT)
 - name : VARCHAR
 - age : INT
 - phone : VARCHAR
@@ -17,7 +17,7 @@
 
 ### Columns
 
-- doctor_id : VARCHAR (Primary Key)
+- doctor_id : INT (Primary Key, AUTO_INCREMENT)
 - name : VARCHAR
 - age : INT
 - phone : VARCHAR
@@ -31,9 +31,9 @@
 
 ### Columns
 
-- appointment_id : VARCHAR (Primary Key)
-- patient_id : VARCHAR (Foreign Key → Patient.patient_id)
-- doctor_id : VARCHAR (Foreign Key → Doctor.doctor_id)
+- appointment_id : INT (Primary Key, AUTO_INCREMENT)
+- patient_id : INT (Foreign Key → Patient.patient_id)
+- doctor_id : INT (Foreign Key → Doctor.doctor_id)
 - date : DATE
 - time : TIME
 - status : VARCHAR
@@ -44,14 +44,14 @@
 
 ### Columns
 
-- consultation_id : VARCHAR (Primary Key)
-- patient_id : VARCHAR (Foreign Key → Patient.patient_id)
-- doctor_id : VARCHAR (Foreign Key → Doctor.doctor_id)
+- consultation_id : INT (Primary Key, AUTO_INCREMENT)
+- patient_id : INT (Foreign Key → Patient.patient_id)
+- doctor_id : INT (Foreign Key → Doctor.doctor_id)
 - date : DATE
 - time : TIME
 - diagnosis : VARCHAR
 - notes : VARCHAR
-- prescription_id : VARCHAR (Foreign Key → Prescription.prescription_id, UNIQUE)
+- prescription_id : INT (Foreign Key → Prescription.prescription_id, UNIQUE)
 
 ---
 
@@ -59,9 +59,9 @@
 
 ### Columns
 
-- prescription_id : VARCHAR (Primary Key)
-- patient_id : VARCHAR (Foreign Key → Patient.patient_id)
-- doctor_id : VARCHAR (Foreign Key → Doctor.doctor_id)
+- prescription_id : INT (Primary Key, AUTO_INCREMENT)
+- patient_id : INT (Foreign Key → Patient.patient_id)
+- doctor_id : INT (Foreign Key → Doctor.doctor_id)
 - medication : VARCHAR
 - dosage : VARCHAR
 - frequency : VARCHAR
@@ -74,9 +74,9 @@
 
 ### Columns
 
-- bill_id : VARCHAR (Primary Key)
-- patient_id : VARCHAR (Foreign Key → Patient.patient_id)
-- consultation_id : VARCHAR (Foreign Key → Consultation.consultation_id)
+- bill_id : INT (Primary Key, AUTO_INCREMENT)
+- patient_id : INT (Foreign Key → Patient.patient_id)
+- consultation_id : INT (Foreign Key → Consultation.consultation_id)
 - amount : DECIMAL
 - date : DATE
 - time : TIME
@@ -100,6 +100,9 @@
 - One Doctor can have many Prescriptions.
 - One Prescription belongs to one Patient.
 - One Prescription belongs to one Doctor.
+
+- One Consultation can have one Prescription.
+- One Prescription belongs to at most one Consultation.
 
 - One Patient can have many Bills.
 - One Consultation can have one Bill.

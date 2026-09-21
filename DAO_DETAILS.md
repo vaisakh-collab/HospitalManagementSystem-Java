@@ -23,6 +23,7 @@ The DAOs use `DatabaseConnection` to obtain a JDBC connection and should not con
 ### Method
 
 - getConnection() : Connection
+
   - Establishes and returns a connection to the database using the credentials stored in the local `config.properties` file.
   - Throws `SQLException` if a database connection error occurs.
   - Throws `IOException` if the configuration file cannot be read.
@@ -36,31 +37,40 @@ Handles database operations related to `Patient`.
 ### Methods
 
 - addPatient(patient : Patient) : boolean
+
   - Inserts a new patient into the `Patient` table.
+  - The patient ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Patient` object.
   - Returns `true` if the patient is successfully added, otherwise `false`.
 
-- findPatient(patientId : String) : Patient
+- findPatient(patientId : int) : Patient
+
   - Finds a patient using their patient ID.
   - Returns the corresponding `Patient` object.
   - Returns `null` if the patient is not found.
 
 - updatePatient(patient : Patient) : boolean
+
   - Updates the patient's information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deletePatient(patientId : String) : boolean
+- deletePatient(patientId : int) : boolean
+
   - Deletes the patient with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getMedicalHistory(patientId : String) : List<Consultation>
+- getMedicalHistory(patientId : int) : List<Consultation>
+
   - Retrieves the consultations associated with the patient.
   - Returns a list of consultations.
 
-- getAppointments(patientId : String) : List<Appointment>
+- getAppointments(patientId : int) : List<Appointment>
+
   - Retrieves the appointments associated with the patient.
   - Returns a list of appointments.
 
-- getPrescriptions(patientId : String) : List<Prescription>
+- getPrescriptions(patientId : int) : List<Prescription>
+
   - Retrieves the prescriptions associated with the patient.
   - Returns a list of prescriptions.
 
@@ -73,23 +83,30 @@ Handles database operations related to `Doctor`.
 ### Methods
 
 - addDoctor(doctor : Doctor) : boolean
+
   - Inserts a new doctor into the `Doctor` table.
+  - The doctor ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Doctor` object.
   - Returns `true` if the doctor is successfully added, otherwise `false`.
 
-- findDoctor(doctorId : String) : Doctor
+- findDoctor(doctorId : int) : Doctor
+
   - Finds a doctor using their doctor ID.
   - Returns the corresponding `Doctor` object.
   - Returns `null` if the doctor is not found.
 
 - updateDoctor(doctor : Doctor) : boolean
+
   - Updates the doctor's information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deleteDoctor(doctorId : String) : boolean
+- deleteDoctor(doctorId : int) : boolean
+
   - Deletes the doctor with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getAppointments(doctorId : String) : List<Appointment>
+- getAppointments(doctorId : int) : List<Appointment>
+
   - Retrieves the appointments associated with the doctor.
   - Returns a list of appointments.
 
@@ -102,27 +119,35 @@ Handles database operations related to `Appointment`.
 ### Methods
 
 - addAppointment(appointment : Appointment) : boolean
+
   - Inserts a new appointment into the `Appointment` table.
+  - The appointment ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Appointment` object.
   - Returns `true` if the appointment is successfully added, otherwise `false`.
 
-- findAppointment(appointmentId : String) : Appointment
+- findAppointment(appointmentId : int) : Appointment
+
   - Finds an appointment using its appointment ID.
   - Returns the corresponding `Appointment` object.
   - Returns `null` if the appointment is not found.
 
 - updateAppointment(appointment : Appointment) : boolean
+
   - Updates the appointment information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deleteAppointment(appointmentId : String) : boolean
+- deleteAppointment(appointmentId : int) : boolean
+
   - Deletes the appointment with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getAppointmentsByPatient(patientId : String) : List<Appointment>
+- getAppointmentsByPatient(patientId : int) : List<Appointment>
+
   - Retrieves appointments belonging to a specific patient.
   - Returns a list of appointments.
 
-- getAppointmentsByDoctor(doctorId : String) : List<Appointment>
+- getAppointmentsByDoctor(doctorId : int) : List<Appointment>
+
   - Retrieves appointments belonging to a specific doctor.
   - Returns a list of appointments.
 
@@ -135,27 +160,35 @@ Handles database operations related to `Consultation`.
 ### Methods
 
 - addConsultation(consultation : Consultation) : boolean
+
   - Inserts a new consultation into the `Consultation` table.
+  - The consultation ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Consultation` object.
   - Returns `true` if the consultation is successfully added, otherwise `false`.
 
-- findConsultation(consultationId : String) : Consultation
+- findConsultation(consultationId : int) : Consultation
+
   - Finds a consultation using its consultation ID.
   - Returns the corresponding `Consultation` object.
   - Returns `null` if the consultation is not found.
 
 - updateConsultation(consultation : Consultation) : boolean
+
   - Updates the consultation information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deleteConsultation(consultationId : String) : boolean
+- deleteConsultation(consultationId : int) : boolean
+
   - Deletes the consultation with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getConsultationsByPatient(patientId : String) : List<Consultation>
+- getConsultationsByPatient(patientId : int) : List<Consultation>
+
   - Retrieves consultations belonging to a specific patient.
   - Returns a list of consultations.
 
-- getConsultationsByDoctor(doctorId : String) : List<Consultation>
+- getConsultationsByDoctor(doctorId : int) : List<Consultation>
+
   - Retrieves consultations belonging to a specific doctor.
   - Returns a list of consultations.
 
@@ -168,27 +201,35 @@ Handles database operations related to `Prescription`.
 ### Methods
 
 - addPrescription(prescription : Prescription) : boolean
+
   - Inserts a new prescription into the `Prescription` table.
+  - The prescription ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Prescription` object.
   - Returns `true` if the prescription is successfully added, otherwise `false`.
 
-- findPrescription(prescriptionId : String) : Prescription
+- findPrescription(prescriptionId : int) : Prescription
+
   - Finds a prescription using its prescription ID.
   - Returns the corresponding `Prescription` object.
   - Returns `null` if the prescription is not found.
 
 - updatePrescription(prescription : Prescription) : boolean
+
   - Updates the prescription information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deletePrescription(prescriptionId : String) : boolean
+- deletePrescription(prescriptionId : int) : boolean
+
   - Deletes the prescription with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getPrescriptionsByPatient(patientId : String) : List<Prescription>
+- getPrescriptionsByPatient(patientId : int) : List<Prescription>
+
   - Retrieves prescriptions belonging to a specific patient.
   - Returns a list of prescriptions.
 
-- getPrescriptionsByDoctor(doctorId : String) : List<Prescription>
+- getPrescriptionsByDoctor(doctorId : int) : List<Prescription>
+
   - Retrieves prescriptions belonging to a specific doctor.
   - Returns a list of prescriptions.
 
@@ -201,23 +242,30 @@ Handles database operations related to `Billing`.
 ### Methods
 
 - addBill(bill : Billing) : boolean
+
   - Inserts a new bill into the `Billing` table.
+  - The bill ID is generated automatically by the database using `AUTO_INCREMENT`.
+  - The generated ID is assigned to the `Billing` object.
   - Returns `true` if the bill is successfully added, otherwise `false`.
 
-- findBill(billId : String) : Billing
+- findBill(billId : int) : Billing
+
   - Finds a bill using its bill ID.
   - Returns the corresponding `Billing` object.
   - Returns `null` if the bill is not found.
 
 - updateBill(bill : Billing) : boolean
+
   - Updates the billing information in the database.
   - Returns `true` if the update is successful, otherwise `false`.
 
-- deleteBill(billId : String) : boolean
+- deleteBill(billId : int) : boolean
+
   - Deletes the bill with the specified ID.
   - Returns `true` if the deletion is successful, otherwise `false`.
 
-- getBillByConsultation(consultationId : String) : Billing
+- getBillByConsultation(consultationId : int) : Billing
+
   - Retrieves the bill associated with a consultation.
   - Returns the corresponding `Billing` object.
   - Returns `null` if no bill exists for the consultation.
