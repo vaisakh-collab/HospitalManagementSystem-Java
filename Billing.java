@@ -2,21 +2,30 @@ import java.time.LocalDate;
 
 public class Billing {
 
-    private String billId;
+    private int billId;
     private Patient patient;
     private Consultation consultation;
     private double amount;
     private LocalDate date;
     private String status;
 
-    // Used to generate unique Bill IDs
-    private static int nextId = 1;
 
     // Constructor
+    //CREATE A NEW BILLING OBJECT
     public Billing (Patient patient, Consultation consultation,
+                double amount, LocalDate date) {
+        this.patient = patient;
+        this.consultation = consultation;
+        this.amount = amount;
+        this.date = date;
+        this.status = "Pending";
+    }
+
+    //RECONSTRUCT AN EXISTING BILLING OBJECT FROM DATABASE
+    public Billing (int billId,Patient patient, Consultation consultation,
                 double amount, LocalDate date, String status) {
 
-        this.billId = String.format("B%03d", nextId++);
+        this.billId = billId;
 
         this.patient = patient;
         this.consultation = consultation;
@@ -25,8 +34,12 @@ public class Billing {
         this.status = status;
     }
 
+    public void setBillId(int billId){
+        this.billId = billId;
+    }
+
     // Get Bill ID
-    public String getBillId() {
+    public int getBillId() {
         return billId;
     }
 
@@ -53,11 +66,6 @@ public class Billing {
     // Get Status
     public String getStatus() {
         return status;
-    }
-
-    // Set Status
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     // Mark Bill as Paid

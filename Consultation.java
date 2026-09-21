@@ -3,7 +3,7 @@ import java.time.LocalTime;
 
 public class Consultation {
 
-    private String consultationId;
+    private int consultationId;
     private Patient patient;
     private Doctor doctor;
     private LocalDate date;
@@ -12,14 +12,11 @@ public class Consultation {
     private String notes;
     private Prescription prescription;
 
-    private static int nextId = 1;
-
+    //CREATE A NEW CONSULTATION
     public Consultation(Patient patient, Doctor doctor,
                         LocalDate date, LocalTime time,
                         String diagnosis, String notes,
                         Prescription prescription) {
-
-        this.consultationId = "CON" + nextId++;
         this.patient = patient;
         this.doctor = doctor;
         this.date = date;
@@ -29,7 +26,27 @@ public class Consultation {
         this.prescription = prescription;
     }
 
-    public String getConsultationId() {
+    //RECONSTRUCTING AN EXISTING CONSULTATION FROM DATABASE
+    public Consultation(int consultationId, Patient patient, Doctor doctor,
+                        LocalDate date, LocalTime time,
+                        String diagnosis, String notes,
+                        Prescription prescription) {
+                            
+        this.consultationId = consultationId;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.date = date;
+        this.time = time;
+        this.diagnosis = diagnosis;
+        this.notes = notes;
+        this.prescription = prescription;
+    }
+
+    public void setConsultationId(int consultationId){
+        this.consultationId = consultationId;
+    }
+
+    public int getConsultationId() {
         return consultationId;
     }
 
