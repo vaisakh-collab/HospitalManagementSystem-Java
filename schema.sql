@@ -3,7 +3,7 @@ CREATE DATABASE hospital;
 USE hospital;
 
 CREATE TABLE Patient (
-    patient_id VARCHAR(10) PRIMARY KEY,
+    patient_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     age INT,
     phone VARCHAR(100),
@@ -12,7 +12,7 @@ CREATE TABLE Patient (
 );
 
 CREATE TABLE Doctor (
-    doctor_id VARCHAR(10) PRIMARY KEY,
+    doctor_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     age INT,
     phone VARCHAR(100),
@@ -22,9 +22,9 @@ CREATE TABLE Doctor (
 );
 
 CREATE TABLE Prescription (
-    prescription_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(10),
-    doctor_id VARCHAR(10),
+    prescription_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT,
+    doctor_id INT,
     medication VARCHAR(100),
     dosage VARCHAR(100),
     frequency VARCHAR(100),
@@ -36,9 +36,9 @@ CREATE TABLE Prescription (
 );
 
 CREATE TABLE Appointment (
-    appointment_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(10),
-    doctor_id VARCHAR(10),
+    appointment_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT,
+    doctor_id INT,
     date DATE,
     time TIME,
     status VARCHAR(50),
@@ -49,14 +49,14 @@ CREATE TABLE Appointment (
 
 
 CREATE TABLE Consultation (
-    consultation_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(10) NOT NULL,
-    doctor_id VARCHAR(10) NOT NULL,
+    consultation_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT NOT NULL,
+    doctor_id INT NOT NULL,
     consultation_date DATE NOT NULL,
     consultation_time TIME NOT NULL,
     diagnosis TEXT,
     notes TEXT,
-    prescription_id VARCHAR(10),
+    prescription_id INT,
     UNIQUE(prescription_id),
 
     CONSTRAINT fk_consultation_patient
@@ -72,12 +72,11 @@ CREATE TABLE Consultation (
         REFERENCES prescription(prescription_id)
 );
 CREATE TABLE Billing (
-    bill_id VARCHAR(10) PRIMARY KEY,
-    patient_id VARCHAR(10),
-    consultation_id VARCHAR(10),
+    bill_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT,
+    consultation_id INT,
     amount DECIMAL(10,2),
     date DATE,
-    time TIME,
     status VARCHAR(50),
 
     CONSTRAINT fk_billing_patient
