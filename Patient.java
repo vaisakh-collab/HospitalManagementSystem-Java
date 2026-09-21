@@ -1,14 +1,23 @@
 import java.util.List;
 public class Patient extends Person {
-  private String patientId;
-  private static int nextId = 1;
+  private int patientId;
+
+  //CREATE A NEW PATIENT
   public Patient(String name, int age, String phone, String address, String email){
     super(name, age, phone, address, email);
-    this.patientId = "P" + nextId;
-    nextId++;
   }
 
-  public String getPatientId(){
+  //RECONSTRUCTING AN EXISTING PATIENT FROM DATABASE
+  public Patient(int patientId, String name, int age, String phone, String address, String email){
+    super(name, age, phone, address, email);
+    this.patientId = patientId;
+  }
+
+  public void setPatientId(int patientId){
+    this.patientId = patientId;
+  }
+
+  public int getPatientId(){
     return this.patientId;
   }
 

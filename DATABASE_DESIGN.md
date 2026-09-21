@@ -79,7 +79,6 @@
 - consultation_id : INT (Foreign Key → Consultation.consultation_id)
 - amount : DECIMAL
 - date : DATE
-- time : TIME
 - status : VARCHAR
 
 ---

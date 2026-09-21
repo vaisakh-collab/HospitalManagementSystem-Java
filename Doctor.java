@@ -4,20 +4,31 @@ import java.util.List;
 
 public class Doctor extends Person {
 
-    private String doctorId;
+    private int doctorId;
     private String specialization;
-    private static int nextId = 1;
 
+    //CREATE A NEW DOCTOR
     public Doctor(String name, int age, String phone, String address,
                   String email, String specialization) {
 
         super(name, age, phone, address, email);
+        this.specialization = specialization;
+    }
+    //RECONSTRUCTING AN EXISTING DOCTOR FROM DATABASE
+    public Doctor(int doctorId, String name, int age, String phone, String address,
+                  String email, String specialization) {
 
-        this.doctorId = String.format("D%03d", nextId++);
+        super(name, age, phone, address, email);
+
+        this.doctorId = doctorId;
         this.specialization = specialization;
     }
 
-    public String getDoctorId() {
+    public void setDoctorId(int doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public int getDoctorId() {
         return this.doctorId;
     }
 
