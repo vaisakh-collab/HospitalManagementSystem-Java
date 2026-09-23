@@ -6,25 +6,24 @@ import java.sql.PreparedStatement;
 public class ConsultationDAO {
 
     String sql = "INSERT INTO Consultation " + 
-                 "(consultation_id, patient_id, doctor_id, consultation_date, consultation_time, diagnosis, notes, prescription_id) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                 "(patient_id, doctor_id, consultation_date, consultation_time, diagnosis, notes, prescription_id) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public boolean addConsultation(Consultation consultation){
         //try-catch and try-with-resources
         //try-with-resources automatically frees the resource after use is over
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)){
-                statement.setString(1, consultation.getConsultationId());
-                statement.setString(2, consultation.getPatient().getPatientId());
-                statement.setString(3, consultation.getDoctor().getDoctorId());
-                statement.setDate(4, java.sql.Date.valueOf(consultation.getDate()));    //differentiate from java.util.Date, otherewise import java.util.Date
-                statement.setTime(5, java.sql.Time.valueOf(consultation.getTime()));
-                statement.setString(6, consultation.getDiagnosis());
-                statement.setString(7, consultation.getNotes());
+                statement.setInt(1, consultation.getPatient().getPatientId());
+                statement.setInt(2, consultation.getDoctor().getDoctorId());
+                statement.setDate(3, java.sql.Date.valueOf(consultation.getDate()));    //differentiate from java.util.Date, otherewise import java.util.Date
+                statement.setTime(4, java.sql.Time.valueOf(consultation.getTime()));
+                statement.setString(5, consultation.getDiagnosis());
+                statement.setString(6, consultation.getNotes());
                 if(consultation.getPrescription() != null){
-                    statement.setString(8,consultation.getPrescription().getPrescriptionId());
+                    statement.setInt(7,consultation.getPrescription().getPrescriptionId());
                 } else{
-                    statement.setNull(8, java.sql.Types.VARCHAR);
+                    statement.setNull(7, java.sql.Types.INTEGER);
                 }
                 
                 int rowsAffected = statement.executeUpdate(); //sends commands to mySQL
