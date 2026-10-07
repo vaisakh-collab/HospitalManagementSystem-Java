@@ -2,18 +2,22 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class ConsultationDAO {
 
-    String sql = "INSERT INTO Consultation " + 
-                 "(patient_id, doctor_id, consultation_date, consultation_time, diagnosis, notes, prescription_id) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
     public boolean addConsultation(Consultation consultation){
+
+        String sql = "INSERT INTO Consultation " + 
+             "(patient_id, doctor_id, consultation_date, consultation_time, diagnosis, notes, prescription_id) " +
+             "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+
         //try-catch and try-with-resources
         //try-with-resources automatically frees the resource after use is over
         try(Connection connection = DatabaseConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)){
+            PreparedStatement statement = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)){
                 statement.setInt(1, consultation.getPatient().getPatientId());
                 statement.setInt(2, consultation.getDoctor().getDoctorId());
                 statement.setDate(3, java.sql.Date.valueOf(consultation.getDate()));    //differentiate from java.util.Date, otherewise import java.util.Date
@@ -28,7 +32,17 @@ public class ConsultationDAO {
                 
                 int rowsAffected = statement.executeUpdate(); //sends commands to mySQL
 
-                return rowsAffected > 0;
+                if(rowsAffected > 0){
+                    ResultSet generatedKeys = statement.getGeneratedKeys();
+
+                    if(generatedKeys.next()){
+                        int generatedId = generatedKeys.getInt(1);
+                        consultation.setConsultationId(generatedId);
+                        return true;
+                    }
+                }
+
+                return false;
         }
         catch(IOException e){
             System.out.println("Caught exception: "+ e.getMessage());
@@ -40,7 +54,7 @@ public class ConsultationDAO {
         }
     }
 
-    public Consultation findConsultation(String consultation_id){
+    public Consultation findConsultation(int consultation_id){
         /* 
         findConsultation(id) 
         → SQL SELECT using that ID 
@@ -52,23 +66,34 @@ public class ConsultationDAO {
 
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);){
-                statement.setString(1,consultation_id);
+                statement.setInt(1,consultation_id);
 
-                java.sql.ResultSet resultSet = statement.executeQuery();
+                ResultSet resultSet = statement.executeQuery();
 
                 if(resultSet.next()){
 
                     PatientDAO patientDAO_obj = new PatientDAO();
                     DoctorDAO doctorDAO_obj = new DoctorDAO();
+                    PrescriptionDAO prescriptionDAO_obj = new PrescriptionDAO();
+                    
+                    //NULL CHECK FOR PRESCRIPTION
+                    int prescriptionId = resultSet.getInt("prescription_id");
+                    
+                    Prescription prescription = null;
+
+                    if(!resultSet.wasNull()){
+                        prescription = prescriptionDAO_obj.findPrescription(prescriptionId);
+                    }
 
                     Consultation consultation = new Consultation(
-                        patientDAO_obj.findPatient(resultSet.getString("patient_id")), 
-                        doctorDAO_obj.findDoctor(resultSet.getString("doctor_id")), 
+                        resultSet.getInt("consultation_id"),
+                        patientDAO_obj.findPatient(resultSet.getInt("patient_id")), 
+                        doctorDAO_obj.findDoctor(resultSet.getInt("doctor_id")), 
                         resultSet.getDate("consultation_date").toLocalDate(), 
                         resultSet.getTime("consultation_time").toLocalTime(), 
                         resultSet.getString("diagnosis"), 
                         resultSet.getString("notes"), 
-                        PrescriptionDAO.getPrescription(resultSet.getString("prescription_id"))
+                        prescription
                     );
 
                     return consultation;
@@ -85,5 +110,35 @@ public class ConsultationDAO {
             return null;
             //no consultation object so return null pointer
         }
+
+        return null;
     }
 }
+    public boolean updateConsultation(Consultation consultation){
+        String sql = "UPDATE consultation"+
+                     "SET patient_id = ?,"+
+                     "doctor_id = ?,"+
+                     "date = ?,"+ 
+                     "time = ?,"+
+                     "diagnosis = ?,"+
+                     "notes = ?,"+
+                     "presciption_id = ?"+
+                     "WHERE consultation_id = ?";
+
+        try(Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ){
+            //user will enter values in GUI and a consultation object will be created
+            //Here we update the table using the values from that consultation object
+            statement.setInt(1,consultation.getPatient().getPatientId());
+            statement.setInt(2, consultation.getDoctor().getDoctorId());
+            statement.setDate(3, java.sql.Date.valueOf(consultation.getDate()));
+            //the mySQL date is different from the Java Date
+            //Here in the Java model we have used LocalDate
+            //But JDBC uses java.sql.Date
+            //similarly below for Time
+            statement.setTime(4, java.sql.Time.valueOf(consultation.getTime()));
+            
+
+        }
+    }

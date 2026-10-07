@@ -110,6 +110,11 @@ Handles database operations related to `Doctor`.
   - Retrieves the appointments associated with the doctor.
   - Returns a list of appointments.
 
+- getAllDoctors() : List<Doctor>
+
+  - Retrieves all doctors from the `Doctor` table.
+  - Returns a list of all doctors.
+
 ---
 
 # AppointmentDAO

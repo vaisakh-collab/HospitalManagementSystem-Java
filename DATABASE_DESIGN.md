@@ -47,8 +47,8 @@
 - consultation_id : INT (Primary Key, AUTO_INCREMENT)
 - patient_id : INT (Foreign Key → Patient.patient_id)
 - doctor_id : INT (Foreign Key → Doctor.doctor_id)
-- date : DATE
-- time : TIME
+- consultation_date : DATE
+- consultation_time : TIME
 - diagnosis : VARCHAR
 - notes : VARCHAR
 - prescription_id : INT (Foreign Key → Prescription.prescription_id, UNIQUE)
