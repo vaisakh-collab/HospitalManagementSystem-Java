@@ -15,7 +15,7 @@ public class PatientDAO {
 
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement ps =
-                     c.prepareStatement+-(sql, Statement.RETURN_GENERATED_KEYS)) {
+                     c.PreparedStatement+-(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, patient.getName());
             ps.setInt(2, patient.getAge());
