@@ -10,7 +10,6 @@ public class HospitalManagementSystem {
     private List<Billing> bills;
     private List<Prescription> prescriptions;
 
-    // Constructor
     public HospitalManagementSystem() {
         patients = new ArrayList<>();
         doctors = new ArrayList<>();
@@ -20,70 +19,55 @@ public class HospitalManagementSystem {
         prescriptions = new ArrayList<>();
     }
 
-    // Add patient
     public boolean addPatient(Patient patient) {
         return patients.add(patient);
     }
 
-    // Add doctor
     public boolean addDoctor(Doctor doctor) {
         return doctors.add(doctor);
     }
 
-    // Book appointment
     public boolean bookAppointment(Appointment appointment) {
         return appointments.add(appointment);
     }
 
-    // Cancel appointment
     public boolean cancelAppointment(int appointmentId) {
-
         for (Appointment appointment : appointments) {
             if (appointment.getAppointmentId() == appointmentId) {
                 appointment.cancelAppointment();
                 return true;
             }
         }
-
         return false;
     }
 
-    // Create consultation
     public boolean createConsultation(Consultation consultation) {
         return consultations.add(consultation);
     }
 
-    // Create prescription
     public boolean createPrescription(Prescription prescription) {
         return prescriptions.add(prescription);
     }
 
-    // Generate bill
     public boolean generateBill(Billing bill) {
         return bills.add(bill);
     }
 
-    // Find patient
     public Patient findPatient(int patientId) {
-
         for (Patient patient : patients) {
             if (patient.getPatientId() == patientId) {
                 return patient;
             }
         }
-
         return null;
     }
 
-    // Find doctor
     public Doctor findDoctor(int doctorId) {
-
         for (Doctor doctor : doctors) {
             if (doctor.getDoctorId() == doctorId) {
                 return doctor;
             }
         }
-
         return null;
     }
 }
