@@ -1,8 +1,7 @@
 import javax.swing.*;
 
-public class MainWindow {
+public class MainWindow extends JFrame{
     MainWindow(){
-
         JFrame frame = new JFrame("Hospital Management System");
 
         frame.setSize(600,400);
