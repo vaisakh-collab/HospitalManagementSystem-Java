@@ -1,3 +1,6 @@
+//Create and return a Connection object
+//Centralizes the database configuration (URL, username, password)
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,12 +15,15 @@ public class DatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/hospital";
 
+    //In our DAO files we will use the getConnection() method of our DatabaseConnection class
+    //Which will call DriverManager.getConnection(URL, user, password)
+
     public static Connection getConnection() throws SQLException, IOException {
 
         Properties properties = new Properties();
 
         try (FileInputStream file = new FileInputStream("config.properties")) {
-            
+
             properties.load(file);
         }
 
