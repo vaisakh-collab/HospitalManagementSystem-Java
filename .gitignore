@@ -25,3 +25,6 @@ replay_pid*
 
 #Properties
 *.properties
+
+# Local database credentials
+config.properties
