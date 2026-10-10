@@ -18,8 +18,6 @@ The system is designed around the following entities:
     duration, and instructions.
 -   **Billing** --- consultation-related bills and payment status.
 
-The project is under development, so some planned functionality may not
-yet be implemented.
 
 
 ## Design Documentation
@@ -67,8 +65,7 @@ Clone the repository:
 git clone https://github.com/vaisakh-collab/HospitalManagementSystem-Java.git
 ```
 
-Open the resulting project directory in your IDE or editor. Replace
-`<repository-url>` with the repository's clone URL.
+Open the resulting project directory in your IDE or editor.
 
 ### 2. Set up the database
 
