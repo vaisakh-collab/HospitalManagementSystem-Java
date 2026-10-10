@@ -21,23 +21,18 @@ The system is designed around the following entities:
 The project is under development, so some planned functionality may not
 yet be implemented.
 
+
 ## Design Documentation
 
-The following documents explain the project's structure and design:
+The following documents explain the project's structure and design.
 
-  ------------------------------------------------------------------------------
-  Document                                   What it covers
-  ------------------------------------------ -----------------------------------
-  [CLASS_DESIGN.md](CLASS_DESIGN.md)         The application's classes,
-                                             attributes, methods, and
-                                             relationships.
+| Document | Description |
+|---|---|
+| [CLASS_DESIGN.md](CLASS_DESIGN.md) | The application's classes, attributes, methods, and relationships. |
+| [DATABASE_DESIGN.md](DATABASE_DESIGN.md) | The database tables, primary keys, foreign keys, and relationships. |
+| [DAO_DETAILS.md](DAO_DETAILS.md) | The Data Access Object (DAO) layer and its database operations. |
 
-  [DATABASE_DESIGN.md](DATABASE_DESIGN.md)   The database tables, primary keys,
-                                             foreign keys, and relationships.
 
-  [DAO_DETAILS.md](DAO_DETAILS.md)           The Data Access Object (DAO) layer
-                                             and its database operations.
-  ------------------------------------------------------------------------------
 
 ## Technology Stack
 
