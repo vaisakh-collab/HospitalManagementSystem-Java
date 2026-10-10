@@ -170,28 +170,12 @@ class structure, database schema, and DAO responsibilities.
 
 ## Troubleshooting
 
-  -----------------------------------------------------------------------
-  Problem                             What to check
-  ----------------------------------- -----------------------------------
-  JDBC driver not found               Confirm that the Connector/J JAR is
-                                      in `lib/` and included on the Java
-                                      classpath.
-
-  MySQL access denied                 Check the username and password in
-                                      `config.properties`.
-
-  Connection refused                  Confirm that MySQL Server is
-                                      running and that the connection URL
-                                      uses the correct host and port.
-
-  Unknown database                    Run `schema.sql` and verify that
-                                      the database is named `hospital`.
-
-  Table does not exist                Check whether all table-creation
-                                      statements in `schema.sql` executed
-                                      successfully.
-
-  Configuration file not found        Check the file location and how
-                                      `DatabaseConnection.java` loads it.
-  -----------------------------------------------------------------------
+| Problem | What to check |
+|---|---|
+| JDBC driver not found | Confirm that the Connector/J JAR is in `lib/` and included on the Java classpath. |
+| MySQL access denied | Check the username and password in `config.properties`. |
+| Connection refused | Confirm that MySQL Server is running and that the connection URL uses the correct host and port. |
+| Unknown database | Run `schema.sql` and verify that the database is named `hospital`. |
+| Table does not exist | Check whether all table-creation statements in `schema.sql` executed successfully. |
+| Configuration file not found | Check the file location and how `DatabaseConnection.java` loads it. |
 
