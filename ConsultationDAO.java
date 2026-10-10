@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -124,7 +123,7 @@ public class ConsultationDAO {
     }
 
     public boolean updateConsultation(Consultation consultation){
-        String sql = "UPDATE consultation "+
+        String sql = "UPDATE Consultation "+
                      "SET patient_id = ?, "+
                      "doctor_id = ?, "+
                      "consultation_date = ?, "+ 
@@ -174,7 +173,7 @@ public class ConsultationDAO {
     }
 
     public boolean deleteConsultation(int consultationId){
-        String sql = "DELETE FROM consultation " +
+        String sql = "DELETE FROM Consultation " +
                      "WHERE consultation_id = ?";
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)){
@@ -205,11 +204,11 @@ public class ConsultationDAO {
         Patient patient = patientDAO_obj.findPatient(patientId);
 
         if(patient == null){
-            System.out.println("Patient not found...");
+            System.out.println("Patient with id "+ patientId +" not found...");
             return null;
         }
 
-        String sql = "SELECT * FROM consultation "+
+        String sql = "SELECT * FROM Consultation "+
                      "WHERE patient_id = ?";
         
         //create a PatientDAO object to use the findPatient() method
@@ -258,13 +257,16 @@ public class ConsultationDAO {
 
     public List<Consultation> getConsultationsByDoctor(int doctorId){
 
-        String sql = "SELECT * FROM consultation "+
+        String sql = "SELECT * FROM Consultation "+
                      "WHERE doctor_id = ?";
         
         DoctorDAO doctorDAO_obj = new DoctorDAO();
         Doctor doctor = doctorDAO_obj.findDoctor(doctorId);
-        //create a PatientDAO object to use the findPatient() method
-        //create a patient object to pass as paramater of Consultation() constructor
+
+        if(doctor == null){
+            System.out.println("Doctor with id "+ doctorId + " not found...");
+            return null;
+        }
 
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)){
@@ -275,17 +277,18 @@ public class ConsultationDAO {
                 ResultSet resultSet = statement.executeQuery();
 
                 //creating database access objects needed to find the Patient and Prescription to be passed to the Consultation constructor
-                DoctorDAO doctorDAO_obj = new DoctorDAO();
+                PatientDAO patientDAO_obj = new PatientDAO();
                 PrescriptionDAO prescriptionDAO_obj = new PrescriptionDAO();
 
                 while(resultSet.next()){
                     //need to retrieve all the necessary information for the Consultation constructor
 
-                    Doctor doctor = doctorDAO_obj.findDoctor(resultSet.getInt("doctor_id"));
+                    Patient patient = patientDAO_obj.findPatient(resultSet.getInt("patient_id"));
                     Prescription prescription = null;
+                    int prescriptionId = resultSet.getInt("prescription_id");
 
                     if(!resultSet.wasNull()){
-                        prescription = prescriptionDAO_obj.findPrescription(resultSet.getInt("prescription_id"));
+                        prescription = prescriptionDAO_obj.findPrescription(prescriptionId);
                     }
 
                     Consultation consultation = new Consultation(resultSet.getInt("consultation_id"), patient, doctor, resultSet.getDate("consultation_date").toLocalDate(), resultSet.getTime("consultation_time").toLocalTime(), resultSet.getString("diagnosis"), resultSet.getString("notes"), prescription);
