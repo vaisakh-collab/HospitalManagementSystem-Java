@@ -87,3 +87,43 @@ CREATE TABLE Billing (
         FOREIGN KEY (consultation_id)
         REFERENCES Consultation(consultation_id)
 );
+
+
+CREATE TABLE UserAccount (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+
+    role VARCHAR(20) NOT NULL,
+
+    patient_id INT UNIQUE,
+    doctor_id INT UNIQUE,
+
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT fk_user_patient
+        FOREIGN KEY (patient_id)
+        REFERENCES Patient(patient_id),
+
+    CONSTRAINT fk_user_doctor
+        FOREIGN KEY (doctor_id)
+        REFERENCES Doctor(doctor_id),
+
+    CONSTRAINT chk_user_role
+        CHECK (role IN ('ADMIN', 'DOCTOR', 'PATIENT')),
+
+    CONSTRAINT chk_user_link
+        CHECK (
+            (role = 'ADMIN'
+                AND patient_id IS NULL
+                AND doctor_id IS NULL)
+            OR
+            (role = 'PATIENT'
+                AND patient_id IS NOT NULL
+                AND doctor_id IS NULL)
+            OR
+            (role = 'DOCTOR'
+                AND doctor_id IS NOT NULL
+                AND patient_id IS NULL)
+        )
+);
