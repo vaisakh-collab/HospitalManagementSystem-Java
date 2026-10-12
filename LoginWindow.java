@@ -2,13 +2,18 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginWindow extends JFrame {
 
-    private JTextField usernameField;
-    private JPasswordField passwordField;
+    private final JTextField usernameField;
+    private final JPasswordField passwordField;
+    private final AuthenticationService authenticationService;
 
     public LoginWindow() {
+
+        authenticationService = new AuthenticationService();
 
         setTitle("Hospital Management System - Login");
         setSize(450, 500);
@@ -16,10 +21,11 @@ public class LoginWindow extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Main panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(new Color(245, 248, 252));
-        mainPanel.setBorder(new EmptyBorder(30, 40, 30, 40));
+        mainPanel.setBorder(
+            new EmptyBorder(30, 40, 30, 40)
+        );
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -27,74 +33,66 @@ public class LoginWindow extends JFrame {
         gbc.weightx = 1.0;
         gbc.insets = new Insets(8, 0, 8, 0);
 
-        // Heading
-        JLabel titleLabel = new JLabel("HOSPITAL SYSTEM", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 25));
+        JLabel titleLabel = new JLabel(
+            "HOSPITAL SYSTEM", SwingConstants.CENTER
+        );
+        titleLabel.setFont(
+            new Font("SansSerif", Font.BOLD, 25)
+        );
         titleLabel.setForeground(new Color(35, 45, 65));
 
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 0, 5, 0);
         mainPanel.add(titleLabel, gbc);
 
-        // Subtitle
         JLabel subtitleLabel = new JLabel(
             "Please log in to continue",
             SwingConstants.CENTER
         );
-        subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         subtitleLabel.setForeground(Color.GRAY);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 30, 0);
+        gbc.insets = new Insets(0, 0, 25, 0);
         mainPanel.add(subtitleLabel, gbc);
 
-        // Username label
-        JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
-
-        gbc.gridy = 2;
         gbc.insets = new Insets(8, 0, 5, 0);
-        mainPanel.add(usernameLabel, gbc);
+        gbc.gridy = 2;
+        mainPanel.add(new JLabel("Username"), gbc);
 
-        // Username field
         usernameField = new JTextField();
-        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        usernameField.setPreferredSize(new Dimension(300, 38));
+        usernameField.setPreferredSize(
+            new Dimension(300, 38)
+        );
 
         gbc.gridy = 3;
         mainPanel.add(usernameField, gbc);
 
-        // Password label
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
-
         gbc.gridy = 4;
-        mainPanel.add(passwordLabel, gbc);
+        mainPanel.add(new JLabel("Password"), gbc);
 
-        // Password field
         passwordField = new JPasswordField();
-        passwordField.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        passwordField.setPreferredSize(new Dimension(300, 38));
+        passwordField.setPreferredSize(
+            new Dimension(300, 38)
+        );
 
         gbc.gridy = 5;
         mainPanel.add(passwordField, gbc);
 
-        // Login button
         JButton loginButton = new JButton("Log In");
-        loginButton.setFont(new Font("SansSerif", Font.BOLD, 15));
+        loginButton.setFont(
+            new Font("SansSerif", Font.BOLD, 15)
+        );
         loginButton.setBackground(new Color(48, 112, 190));
         loginButton.setForeground(Color.WHITE);
         loginButton.setFocusPainted(false);
-        loginButton.setPreferredSize(new Dimension(300, 42));
+        loginButton.setPreferredSize(
+            new Dimension(300, 42)
+        );
 
         gbc.gridy = 6;
         gbc.insets = new Insets(25, 0, 10, 0);
         mainPanel.add(loginButton, gbc);
 
-        // Login action
         loginButton.addActionListener(e -> login());
-
-        // Pressing Enter in the password field also logs in
         passwordField.addActionListener(e -> login());
 
         add(mainPanel);
@@ -103,9 +101,11 @@ public class LoginWindow extends JFrame {
     private void login() {
 
         String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
+        char[] password = passwordField.getPassword();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.length == 0) {
+            java.util.Arrays.fill(password, '\0');
+
             JOptionPane.showMessageDialog(
                 this,
                 "Please enter both username and password.",
@@ -115,27 +115,43 @@ public class LoginWindow extends JFrame {
             return;
         }
 
-        // Temporary login validation.
-        // Replace this with actual authentication later.
-        if (username.equals("admin") && password.equals("admin123")) {
+        try {
+            UserAccount account =
+                authenticationService.login(username, password);
 
-            JOptionPane.showMessageDialog(
-                this,
-                "Login successful!"
-            );
+            if (account == null) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid username or password, or account inactive.",
+                    "Login Failed",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                passwordField.setText("");
+                return;
+            }
 
+            // Temporary integration: opens the existing main window.
+            // Role-based access restrictions must also be implemented.
             MainWindow mainWindow = new MainWindow();
             mainWindow.setVisible(true);
             dispose();
 
-        } else {
+        } catch (SQLException | IOException ex) {
             JOptionPane.showMessageDialog(
                 this,
-                "Invalid username or password.",
-                "Login Failed",
+                "Unable to connect to the authentication database.",
+                "Database Error",
                 JOptionPane.ERROR_MESSAGE
             );
+
+            ex.printStackTrace();
         }
     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            LoginWindow window = new LoginWindow();
+            window.setVisible(true);
+        });
+    }
 }
