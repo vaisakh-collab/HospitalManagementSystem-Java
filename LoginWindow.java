@@ -2,164 +2,94 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class LoginWindow extends JFrame {
 
-    private final JTextField usernameField;
-    private final JPasswordField passwordField;
-    private final AuthenticationService authenticationService;
+    private static final Color NAVY = new Color(35, 45, 65);
+    private static final Color BLUE = new Color(48, 112, 190);
+    private static final Color BG = new Color(245, 248, 252);
 
     public LoginWindow() {
-
-        authenticationService = new AuthenticationService();
-
-        setTitle("Hospital Management System - Login");
-        setSize(450, 500);
+        setTitle("Hospital Management System");
+        setSize(460, 480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(new Color(245, 248, 252));
-        mainPanel.setBorder(
-            new EmptyBorder(30, 40, 30, 40)
-        );
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG);
+        panel.setBorder(new EmptyBorder(30, 40, 30, 40));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.weightx = 1;
+        gbc.insets = new Insets(9, 0, 9, 0);
 
-        JLabel titleLabel = new JLabel(
+        JLabel title = new JLabel(
             "HOSPITAL SYSTEM", SwingConstants.CENTER
         );
-        titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD, 25)
-        );
-        titleLabel.setForeground(new Color(35, 45, 65));
+        title.setFont(new Font("SansSerif", Font.BOLD, 25));
+        title.setForeground(NAVY);
 
         gbc.gridy = 0;
-        mainPanel.add(titleLabel, gbc);
+        panel.add(title, gbc);
 
-        JLabel subtitleLabel = new JLabel(
-            "Please log in to continue",
-            SwingConstants.CENTER
+        JLabel subtitle = new JLabel(
+            "Select your login type", SwingConstants.CENTER
         );
-        subtitleLabel.setForeground(Color.GRAY);
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        subtitle.setForeground(Color.GRAY);
 
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 25, 0);
-        mainPanel.add(subtitleLabel, gbc);
+        gbc.insets = new Insets(5, 0, 25, 0);
+        panel.add(subtitle, gbc);
 
-        gbc.insets = new Insets(8, 0, 5, 0);
+        JButton patientButton = createButton("Patient Login");
+        JButton doctorButton = createButton("Doctor Login");
+        JButton adminButton = createButton("Admin Login");
+
+        gbc.insets = new Insets(8, 0, 8, 0);
+
         gbc.gridy = 2;
-        mainPanel.add(new JLabel("Username"), gbc);
-
-        usernameField = new JTextField();
-        usernameField.setPreferredSize(
-            new Dimension(300, 38)
-        );
+        panel.add(patientButton, gbc);
 
         gbc.gridy = 3;
-        mainPanel.add(usernameField, gbc);
+        panel.add(doctorButton, gbc);
 
         gbc.gridy = 4;
-        mainPanel.add(new JLabel("Password"), gbc);
+        panel.add(adminButton, gbc);
 
-        passwordField = new JPasswordField();
-        passwordField.setPreferredSize(
-            new Dimension(300, 38)
+        patientButton.addActionListener(e ->
+            openLogin(UserRole.PATIENT)
         );
 
-        gbc.gridy = 5;
-        mainPanel.add(passwordField, gbc);
-
-        JButton loginButton = new JButton("Log In");
-        loginButton.setFont(
-            new Font("SansSerif", Font.BOLD, 15)
-        );
-        loginButton.setBackground(new Color(48, 112, 190));
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFocusPainted(false);
-        loginButton.setPreferredSize(
-            new Dimension(300, 42)
+        doctorButton.addActionListener(e ->
+            openLogin(UserRole.DOCTOR)
         );
 
-        gbc.gridy = 6;
-        gbc.insets = new Insets(25, 0, 10, 0);
-        mainPanel.add(loginButton, gbc);
+        adminButton.addActionListener(e ->
+            openLogin(UserRole.ADMIN)
+        );
 
-        loginButton.addActionListener(e -> login());
-        passwordField.addActionListener(e -> login());
-
-        add(mainPanel);
+        add(panel);
     }
 
-    private void login() {
-
-        String username = usernameField.getText().trim();
-        char[] password = passwordField.getPassword();
-
-        if (username.isEmpty() || password.length == 0) {
-            java.util.Arrays.fill(password, '\0');
-
-            JOptionPane.showMessageDialog(
-                this,
-                "Please enter both username and password.",
-                "Missing Information",
-                JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-        try {
-            UserAccount account =
-                authenticationService.login(username, password);
-
-            if (account == null) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Invalid username or password, or account inactive.",
-                    "Login Failed",
-                    JOptionPane.ERROR_MESSAGE
-                );
-                passwordField.setText("");
-                return;
-            }
-
-            // Temporary integration: opens the existing main window.
-            // Role-based access restrictions must also be implemented.
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.setVisible(true);
-            dispose();
-
-        } catch (SQLException | IOException ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Unable to connect to the authentication database.",
-                "Database Error",
-                JOptionPane.ERROR_MESSAGE
-            );
-
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Login failed because of a database or security error.",
-                "Error",
-                JOptionPane.ERROR_MESSAGE
-    );
-    ex.printStackTrace();
-}
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 15));
+        button.setBackground(BLUE);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(300, 45));
+        return button;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            LoginWindow window = new LoginWindow();
-            window.setVisible(true);
-        });
+    private void openLogin(UserRole role) {
+        RoleLoginWindow loginWindow =
+            new RoleLoginWindow(role);
+
+        loginWindow.setVisible(true);
+        dispose();
     }
 }

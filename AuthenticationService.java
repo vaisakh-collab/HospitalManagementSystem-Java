@@ -11,18 +11,23 @@ public class AuthenticationService {
         userAccountDAO = new UserAccountDAO();
     }
 
-    public UserAccount login(String username, char[] password)
+    public UserAccount login(
+            String username,
+            char[] password,
+            UserRole expectedRole)
             throws SQLException, IOException, Exception {
 
-        if (username == null || username.isBlank()
-                || password == null || password.length == 0) {
-            if (password != null) {
-                Arrays.fill(password, '\0');
-            }
+        if (password == null) {
             return null;
         }
 
         try {
+            if (username == null || username.isBlank()
+                    || password.length == 0
+                    || expectedRole == null) {
+                return null;
+            }
+
             UserAccount account =
                 userAccountDAO.findByUsername(username.trim());
 
@@ -30,11 +35,18 @@ public class AuthenticationService {
                 return null;
             }
 
-            boolean valid = PasswordUtil.verifyPassword(
-                password, account.getPasswordHash()
-            );
+            // The selected login page determines the permitted role.
+            if (account.getRole() != expectedRole) {
+                return null;
+            }
 
-            return valid ? account : null;
+            boolean passwordMatches =
+                PasswordUtil.verifyPassword(
+                    password,
+                    account.getPasswordHash()
+                );
+
+            return passwordMatches ? account : null;
 
         } finally {
             Arrays.fill(password, '\0');
