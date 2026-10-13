@@ -3,35 +3,35 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 public class AuthenticationService {
 
     private final UserAccountDAO userAccountDAO;
 
     public AuthenticationService() {
-        this.userAccountDAO = new UserAccountDAO();
+        userAccountDAO = new UserAccountDAO();
     }
 
     public UserAccount login(String username, char[] password)
-            throws SQLException, IOException {
+            throws SQLException, IOException, Exception {
 
         if (username == null || username.isBlank()
                 || password == null || password.length == 0) {
+            if (password != null) {
+                Arrays.fill(password, '\0');
+            }
             return null;
         }
 
         try {
             UserAccount account =
-                    userAccountDAO.findByUsername(username.trim());
+                userAccountDAO.findByUsername(username.trim());
 
             if (account == null || !account.isActive()) {
                 return null;
             }
 
-            boolean valid = BCrypt.checkpw(
-                new String(password),
-                account.getPasswordHash()
+            boolean valid = PasswordUtil.verifyPassword(
+                password, account.getPasswordHash()
             );
 
             return valid ? account : null;

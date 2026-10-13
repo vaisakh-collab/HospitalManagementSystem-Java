@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.mindrot.jbcrypt.BCrypt;
+
 
 public class UserAccountDAO {
 
@@ -60,7 +60,7 @@ public class UserAccountDAO {
             UserRole role,
             Integer patientId,
             Integer doctorId)
-            throws SQLException, IOException {
+            throws SQLException, IOException, Exception {
 
         if (username == null || username.isBlank()
                 || password == null || password.isEmpty()
@@ -82,11 +82,7 @@ public class UserAccountDAO {
             }
         }
 
-        // Hash the password before storing it.
-        String passwordHash = BCrypt.hashpw(
-            password,
-            BCrypt.gensalt(12)
-        );
+        String passwordHash = PasswordUtil.hashPassword(password.toCharArray());
 
         String sql = """
             INSERT INTO UserAccount

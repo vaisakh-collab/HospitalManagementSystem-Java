@@ -145,7 +145,15 @@ public class LoginWindow extends JFrame {
             );
 
             ex.printStackTrace();
-        }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Login failed because of a database or security error.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+    );
+    ex.printStackTrace();
+}
     }
 
     public static void main(String[] args) {
