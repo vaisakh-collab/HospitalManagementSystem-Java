@@ -4,8 +4,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 
 public class DoctorDashboard extends JFrame {
 
