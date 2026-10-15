@@ -78,18 +78,40 @@ public class RoleLoginWindow extends JFrame {
                 return;
             }
 
+
             if (account.getRole() == UserRole.PATIENT) {
                 if (account.getPatientId() == null) {
-                    JOptionPane.showMessageDialog(this, "This patient account is not linked to a patient record.",
-                        "Account Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "This patient account is not linked to a patient record.",
+                        "Account Error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
                     return;
                 }
+
                 new PatientDashboard(account).setVisible(true);
-            } else {
-                // Doctor/admin dashboards have not been implemented yet.
+
+            } else if (account.getRole() == UserRole.DOCTOR) {
+                if (account.getDoctorId() == null) {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "This doctor account is not linked to a doctor record.",
+                        "Account Error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+
+                new DoctorDashboard(account).setVisible(true);
+
+            } else if (account.getRole() == UserRole.ADMIN) {
                 new MainWindow().setVisible(true);
             }
+
             dispose();
+
+
         } catch (SQLException | IOException ex) {
             JOptionPane.showMessageDialog(this, "Could not connect to the database.",
                 "Database Error", JOptionPane.ERROR_MESSAGE);
