@@ -1,9 +1,10 @@
-
 // import javax.swing.*;
 // import javax.swing.border.EmptyBorder;
 // import javax.swing.table.DefaultTableModel;
 // import java.awt.*;
 // import java.sql.*;
+// import java.time.LocalDate;
+// import java.time.LocalTime;
 // import java.util.List;
 
 
@@ -214,180 +215,217 @@
 
     
 // private void recordConsultation() {
-//     List<Appointment> appointments =
-//             appointmentDAO.getAppointmentsByDoctor(doctorId);
-
-//     if (appointments.isEmpty()) {
-//         JOptionPane.showMessageDialog(
-//                 this,
-//                 "There are no appointments available to record a consultation.",
-//                 "No Appointments",
-//                 JOptionPane.INFORMATION_MESSAGE
-//         );
+//     List<Appointment> appointments = appointmentDAO.getAppointmentsByDoctor(doctorId);
+//     if (appointments == null || appointments.isEmpty()) {
+//         JOptionPane.showMessageDialog(this, "There are no appointments available to record a consultation.",
+//                 "No Appointments", JOptionPane.INFORMATION_MESSAGE);
 //         return;
 //     }
 
 //     JComboBox<Appointment> appointmentBox = new JComboBox<>();
-
 //     for (Appointment appointment : appointments) {
-//         if (appointment.getPatient() != null) {
+//         if (appointment != null && appointment.getPatient() != null
+//                 && !"COMPLETED".equalsIgnoreCase(appointment.getStatus())) {
 //             appointmentBox.addItem(appointment);
 //         }
 //     }
-
+//     if (appointmentBox.getItemCount() == 0) {
+//         JOptionPane.showMessageDialog(this, "There are no incomplete appointments available.",
+//                 "No Appointments", JOptionPane.INFORMATION_MESSAGE);
+//         return;
+//     }
 //     appointmentBox.setRenderer(new DefaultListCellRenderer() {
-//         @Override
-//         public Component getListCellRendererComponent(
-//                 JList<?> list, Object value, int index,
-//                 boolean isSelected, boolean cellHasFocus) {
-
-//             super.getListCellRendererComponent(
-//                     list, value, index, isSelected, cellHasFocus);
-
+//         @Override public Component getListCellRendererComponent(JList<?> list, Object value,
+//                 int index, boolean isSelected, boolean cellHasFocus) {
+//             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 //             if (value instanceof Appointment) {
 //                 Appointment a = (Appointment) value;
-//                 Patient p = a.getPatient();
-
-//                 setText(p.getName()
-//                         + " | " + a.getDate()
-//                         + " " + a.getTime()
+//                 setText(a.getPatient().getName() + " | " + a.getDate() + " " + a.getTime()
 //                         + " | Appointment #" + a.getAppointmentId());
 //             }
-
 //             return this;
 //         }
 //     });
 
-//     JTextField dateField =
-//             new JTextField(java.time.LocalDate.now().toString());
-
-//     JTextField timeField =
-//             new JTextField(java.time.LocalTime.now()
-//                     .withSecond(0).withNano(0).toString());
-
+//     JTextField dateField = new JTextField(LocalDate.now().toString());
+//     JTextField timeField = new JTextField(LocalTime.now().withSecond(0).withNano(0).toString());
 //     JTextField diagnosisField = new JTextField();
-//     JTextArea notesArea = new JTextArea(5, 25);
+//     JTextArea notesArea = new JTextArea(3, 25);
 //     notesArea.setLineWrap(true);
 //     notesArea.setWrapStyleWord(true);
 
-//     JPanel form = new JPanel(new GridLayout(0, 2, 8, 8));
+//     JCheckBox prescribeCheck = new JCheckBox("Add a prescription");
+//     JTextField medicationField = new JTextField();
+//     JTextField dosageField = new JTextField();
+//     JTextField frequencyField = new JTextField();
+//     JTextField durationField = new JTextField();
+//     JTextField instructionsField = new JTextField();
+//     JCheckBox billCheck = new JCheckBox("Generate a bill", true);
+//     JTextField chargeField = new JTextField("0.00");
+//     JComboBox<String> paymentStatusBox = new JComboBox<>(new String[]{"UNPAID", "PAID"});
 
-//     form.add(new JLabel("Appointment / Patient"));
-//     form.add(appointmentBox);
+//     JPanel form = new JPanel(new GridBagLayout());
+//     GridBagConstraints g = new GridBagConstraints();
+//     g.insets = new Insets(4, 5, 4, 5);
+//     g.fill = GridBagConstraints.HORIZONTAL;
+//     g.weightx = 1;
+//     int row = 0;
+//     addFormRow(form, g, row++, "Appointment / Patient", appointmentBox);
+//     addFormRow(form, g, row++, "Date (YYYY-MM-DD)", dateField);
+//     addFormRow(form, g, row++, "Time (HH:MM or HH:MM:SS)", timeField);
+//     addFormRow(form, g, row++, "Diagnosis", diagnosisField);
+//     addFormRow(form, g, row++, "Consultation notes", new JScrollPane(notesArea));
+//     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JSeparator(), g);
+//     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(prescribeCheck, g);
+//     addFormRow(form, g, row++, "Medicine", medicationField);
+//     addFormRow(form, g, row++, "Dosage", dosageField);
+//     addFormRow(form, g, row++, "Frequency", frequencyField);
+//     addFormRow(form, g, row++, "Duration", durationField);
+//     addFormRow(form, g, row++, "Instructions", instructionsField);
+//     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JSeparator(), g);
+//     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(billCheck, g);
+//     addFormRow(form, g, row++, "Consultation charge", chargeField);
+//     addFormRow(form, g, row, "Payment status", paymentStatusBox);
 
-//     form.add(new JLabel("Date (YYYY-MM-DD)"));
-//     form.add(dateField);
+//     Runnable updatePrescriptionFields = () -> {
+//         boolean enabled = prescribeCheck.isSelected();
+//         medicationField.setEnabled(enabled); dosageField.setEnabled(enabled);
+//         frequencyField.setEnabled(enabled); durationField.setEnabled(enabled);
+//         instructionsField.setEnabled(enabled);
+//     };
+//     prescribeCheck.addActionListener(e -> updatePrescriptionFields.run());
+//     updatePrescriptionFields.run();
+//     Runnable updateBillingFields = () -> {
+//         boolean enabled = billCheck.isSelected();
+//         chargeField.setEnabled(enabled); paymentStatusBox.setEnabled(enabled);
+//     };
+//     billCheck.addActionListener(e -> updateBillingFields.run());
+//     updateBillingFields.run();
 
-//     form.add(new JLabel("Time (HH:MM)"));
-//     form.add(timeField);
+//     JScrollPane formScroll = new JScrollPane(form);
+//     formScroll.setPreferredSize(new Dimension(620, 560));
+//     int result = JOptionPane.showConfirmDialog(this, formScroll,
+//             "Record Consultation, Prescription and Billing",
+//             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+//     if (result != JOptionPane.OK_OPTION) return;
 
-//     form.add(new JLabel("Diagnosis"));
-//     form.add(diagnosisField);
-
-//     form.add(new JLabel("Notes"));
-//     form.add(new JScrollPane(notesArea));
-
-//     int result = JOptionPane.showConfirmDialog(
-//             this,
-//             form,
-//             "Record Consultation",
-//             JOptionPane.OK_CANCEL_OPTION,
-//             JOptionPane.PLAIN_MESSAGE
-//     );
-
-//     if (result != JOptionPane.OK_OPTION) {
+//     Appointment appointment = (Appointment) appointmentBox.getSelectedItem();
+//     if (appointment == null || appointment.getPatient() == null) {
+//         JOptionPane.showMessageDialog(this, "Select a valid appointment.");
+//         return;
+//     }
+//     String diagnosis = diagnosisField.getText().trim();
+//     if (diagnosis.isEmpty()) {
+//         JOptionPane.showMessageDialog(this, "Diagnosis cannot be empty.");
 //         return;
 //     }
 
+//     boolean hasPrescription = prescribeCheck.isSelected();
+//     boolean hasBill = billCheck.isSelected();
+//     String medication = medicationField.getText().trim();
+//     String dosage = dosageField.getText().trim();
+//     String frequency = frequencyField.getText().trim();
+//     String duration = durationField.getText().trim();
+//     String instructions = instructionsField.getText().trim();
+//     if (hasPrescription && (medication.isEmpty() || dosage.isEmpty()
+//             || frequency.isEmpty() || duration.isEmpty())) {
+//         JOptionPane.showMessageDialog(this,
+//                 "Medicine, dosage, frequency and duration are required for a prescription.");
+//         return;
+//     }
+
+//     java.math.BigDecimal charge = java.math.BigDecimal.ZERO;
+//     if (hasBill) {
+//         try {
+//             charge = new java.math.BigDecimal(chargeField.getText().trim());
+//             if (charge.signum() < 0) throw new NumberFormatException();
+//         } catch (NumberFormatException ex) {
+//             JOptionPane.showMessageDialog(this, "Enter a valid non-negative consultation charge.");
+//             return;
+//         }
+//     }
+
 //     try {
-//         Appointment appointment =
-//                 (Appointment) appointmentBox.getSelectedItem();
+//         LocalDate consultationDate = LocalDate.parse(dateField.getText().trim());
+//         LocalTime consultationTime = LocalTime.parse(timeField.getText().trim());
+//         Patient patient = patientDAO.findPatient(appointment.getPatient().getPatientId());
+//         if (patient == null) throw new SQLException("Could not load patient record.");
 
-//         if (appointment == null || appointment.getPatient() == null) {
-//             JOptionPane.showMessageDialog(
-//                     this, "Select a valid appointment.");
-//             return;
-//         }
+//         try (Connection c = DatabaseConnection.getConnection()) {
+//             c.setAutoCommit(false);
+//             try {
+//                 Integer prescriptionId = null;
+//                 if (hasPrescription) {
+//                     String sql = "INSERT INTO Prescription (patient_id, doctor_id, medication, dosage, frequency, duration, instructions) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//                     try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+//                         ps.setInt(1, patient.getPatientId()); ps.setInt(2, doctorId);
+//                         ps.setString(3, medication); ps.setString(4, dosage);
+//                         ps.setString(5, frequency); ps.setString(6, duration); ps.setString(7, instructions);
+//                         ps.executeUpdate();
+//                         try (ResultSet keys = ps.getGeneratedKeys()) {
+//                             if (!keys.next()) throw new SQLException("Could not create prescription ID.");
+//                             prescriptionId = keys.getInt(1);
+//                         }
+//                     }
+//                 }
 
-//         java.time.LocalDate date =
-//                 java.time.LocalDate.parse(dateField.getText().trim());
+//                 String consultationSql = "INSERT INTO Consultation (patient_id, doctor_id, consultation_date, consultation_time, diagnosis, notes, prescription_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//                 int consultationId;
+//                 try (PreparedStatement ps = c.prepareStatement(consultationSql, Statement.RETURN_GENERATED_KEYS)) {
+//                     ps.setInt(1, patient.getPatientId()); ps.setInt(2, doctorId);
+//                     ps.setDate(3, Date.valueOf(consultationDate)); ps.setTime(4, Time.valueOf(consultationTime));
+//                     ps.setString(5, diagnosis); ps.setString(6, notesArea.getText().trim());
+//                     if (prescriptionId == null) ps.setNull(7, Types.INTEGER); else ps.setInt(7, prescriptionId);
+//                     ps.executeUpdate();
+//                     try (ResultSet keys = ps.getGeneratedKeys()) {
+//                         if (!keys.next()) throw new SQLException("Could not create consultation ID.");
+//                         consultationId = keys.getInt(1);
+//                     }
+//                 }
 
-//         java.time.LocalTime time =
-//                 java.time.LocalTime.parse(timeField.getText().trim());
+//                 if (hasBill) {
+//                     String billingSql = "INSERT INTO Billing (patient_id, consultation_id, amount, date, status) VALUES (?, ?, ?, ?, ?)";
+//                     try (PreparedStatement ps = c.prepareStatement(billingSql)) {
+//                         ps.setInt(1, patient.getPatientId()); ps.setInt(2, consultationId);
+//                         ps.setBigDecimal(3, charge); ps.setDate(4, Date.valueOf(consultationDate));
+//                         ps.setString(5, (String) paymentStatusBox.getSelectedItem());
+//                         ps.executeUpdate();
+//                     }
+//                 }
 
-//         String diagnosis = diagnosisField.getText().trim();
-//         String notes = notesArea.getText().trim();
-
-//         if (diagnosis.isEmpty()) {
-//             JOptionPane.showMessageDialog(
-//                     this, "Diagnosis cannot be empty.");
-//             return;
-//         }
-
-//         Patient patient = patientDAO.findPatient(
-//                 appointment.getPatient().getPatientId());
-
-//         Doctor doctor = doctorDAO.findDoctor(doctorId);
-
-//         if (patient == null || doctor == null) {
-//             JOptionPane.showMessageDialog(
-//                     this, "Could not load the patient or doctor record.");
-//             return;
-//         }
-
-//         Consultation consultation = new Consultation(
-//                 0,
-//                 patient,
-//                 doctor,
-//                 date,
-//                 time,
-//                 diagnosis,
-//                 notes,
-//                 null
-//         );
-
-//         if (consultationDAO.addConsultation(consultation)) {
-//             String sql =
-//                 "UPDATE Appointment SET status = ? " +
-//                 "WHERE appointment_id = ? AND doctor_id = ?";
-
-//             try (Connection c = DatabaseConnection.getConnection();
-//                 PreparedStatement ps = c.prepareStatement(sql)) {
-
-//                 ps.setString(1, "COMPLETED");
-//                 ps.setInt(2, appointment.getAppointmentId());
-//                 ps.setInt(3, doctorId);
-
-//                 ps.executeUpdate();
+//                 String updateSql = "UPDATE Appointment SET status = ? WHERE appointment_id = ? AND doctor_id = ?";
+//                 try (PreparedStatement ps = c.prepareStatement(updateSql)) {
+//                     ps.setString(1, "COMPLETED"); ps.setInt(2, appointment.getAppointmentId()); ps.setInt(3, doctorId);
+//                     if (ps.executeUpdate() != 1) throw new SQLException("Appointment status was not updated.");
+//                 }
+//                 c.commit();
+//             } catch (Exception ex) {
+//                 try { c.rollback(); } catch (SQLException rollbackEx) { ex.addSuppressed(rollbackEx); }
+//                 throw ex;
+//             } finally {
+//                 try { c.setAutoCommit(true); } catch (SQLException ignored) { }
 //             }
-
-//             JOptionPane.showMessageDialog(
-//                     this, "Consultation recorded successfully.");
-
-//             loadAppointments();
-//             loadConsultations();
-//             updateOverviewStats();
-
-//         } else {
-//             JOptionPane.showMessageDialog(
-//                     this,
-//                     "Could not save the consultation. Check the console.",
-//                     "Save Failed",
-//                     JOptionPane.ERROR_MESSAGE
-//             );
 //         }
 
+//         JOptionPane.showMessageDialog(this, "Consultation saved successfully."
+//                 + (hasPrescription ? "\nPrescription saved." : "\nNo prescription added.")
+//                 + (hasBill ? "\nBill generated." : "\nNo bill generated."));
+//         refreshAll();
 //     } catch (Exception ex) {
 //         ex.printStackTrace();
-
-//         JOptionPane.showMessageDialog(
-//                 this,
-//                 "Could not record consultation:\n" + ex.getMessage(),
-//                 "Error",
-//                 JOptionPane.ERROR_MESSAGE
-//         );
+//         JOptionPane.showMessageDialog(this,
+//                 "Could not save consultation, prescription and billing:\n" + ex.getMessage(),
+//                 "Save Failed", JOptionPane.ERROR_MESSAGE);
 //     }
 // }
+
+// private void addFormRow(JPanel form, GridBagConstraints g, int row, String label, Component field) {
+//     g.gridy = row; g.gridwidth = 1; g.weightx = 0; g.gridx = 0;
+//     form.add(new JLabel(label), g);
+//     g.gridx = 1; g.weightx = 1;
+//     form.add(field, g);
+// }
+
 
 
 //     private void viewSelectedHistory() {
@@ -913,13 +951,11 @@ private void recordConsultation() {
     notesArea.setLineWrap(true);
     notesArea.setWrapStyleWord(true);
 
-    JCheckBox prescribeCheck = new JCheckBox("Add a prescription");
     JTextField medicationField = new JTextField();
     JTextField dosageField = new JTextField();
     JTextField frequencyField = new JTextField();
     JTextField durationField = new JTextField();
     JTextField instructionsField = new JTextField();
-    JCheckBox billCheck = new JCheckBox("Generate a bill", true);
     JTextField chargeField = new JTextField("0.00");
     JComboBox<String> paymentStatusBox = new JComboBox<>(new String[]{"UNPAID", "PAID"});
 
@@ -935,31 +971,16 @@ private void recordConsultation() {
     addFormRow(form, g, row++, "Diagnosis", diagnosisField);
     addFormRow(form, g, row++, "Consultation notes", new JScrollPane(notesArea));
     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JSeparator(), g);
-    g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(prescribeCheck, g);
+    g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JLabel("Prescription (required)"), g);
     addFormRow(form, g, row++, "Medicine", medicationField);
     addFormRow(form, g, row++, "Dosage", dosageField);
     addFormRow(form, g, row++, "Frequency", frequencyField);
     addFormRow(form, g, row++, "Duration", durationField);
     addFormRow(form, g, row++, "Instructions", instructionsField);
     g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JSeparator(), g);
-    g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(billCheck, g);
+    g.gridx = 0; g.gridy = row++; g.gridwidth = 2; form.add(new JLabel("Billing (required)"), g);
     addFormRow(form, g, row++, "Consultation charge", chargeField);
     addFormRow(form, g, row, "Payment status", paymentStatusBox);
-
-    Runnable updatePrescriptionFields = () -> {
-        boolean enabled = prescribeCheck.isSelected();
-        medicationField.setEnabled(enabled); dosageField.setEnabled(enabled);
-        frequencyField.setEnabled(enabled); durationField.setEnabled(enabled);
-        instructionsField.setEnabled(enabled);
-    };
-    prescribeCheck.addActionListener(e -> updatePrescriptionFields.run());
-    updatePrescriptionFields.run();
-    Runnable updateBillingFields = () -> {
-        boolean enabled = billCheck.isSelected();
-        chargeField.setEnabled(enabled); paymentStatusBox.setEnabled(enabled);
-    };
-    billCheck.addActionListener(e -> updateBillingFields.run());
-    updateBillingFields.run();
 
     JScrollPane formScroll = new JScrollPane(form);
     formScroll.setPreferredSize(new Dimension(620, 560));
@@ -979,29 +1000,25 @@ private void recordConsultation() {
         return;
     }
 
-    boolean hasPrescription = prescribeCheck.isSelected();
-    boolean hasBill = billCheck.isSelected();
     String medication = medicationField.getText().trim();
     String dosage = dosageField.getText().trim();
     String frequency = frequencyField.getText().trim();
     String duration = durationField.getText().trim();
     String instructions = instructionsField.getText().trim();
-    if (hasPrescription && (medication.isEmpty() || dosage.isEmpty()
-            || frequency.isEmpty() || duration.isEmpty())) {
+    if (medication.isEmpty() || dosage.isEmpty()
+            || frequency.isEmpty() || duration.isEmpty()) {
         JOptionPane.showMessageDialog(this,
                 "Medicine, dosage, frequency and duration are required for a prescription.");
         return;
     }
 
-    java.math.BigDecimal charge = java.math.BigDecimal.ZERO;
-    if (hasBill) {
-        try {
-            charge = new java.math.BigDecimal(chargeField.getText().trim());
-            if (charge.signum() < 0) throw new NumberFormatException();
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Enter a valid non-negative consultation charge.");
-            return;
-        }
+    java.math.BigDecimal charge;
+    try {
+        charge = new java.math.BigDecimal(chargeField.getText().trim());
+        if (charge.signum() < 0) throw new NumberFormatException();
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Enter a valid non-negative consultation charge.");
+        return;
     }
 
     try {
@@ -1013,18 +1030,16 @@ private void recordConsultation() {
         try (Connection c = DatabaseConnection.getConnection()) {
             c.setAutoCommit(false);
             try {
-                Integer prescriptionId = null;
-                if (hasPrescription) {
-                    String sql = "INSERT INTO Prescription (patient_id, doctor_id, medication, dosage, frequency, duration, instructions) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                    try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                        ps.setInt(1, patient.getPatientId()); ps.setInt(2, doctorId);
-                        ps.setString(3, medication); ps.setString(4, dosage);
-                        ps.setString(5, frequency); ps.setString(6, duration); ps.setString(7, instructions);
-                        ps.executeUpdate();
-                        try (ResultSet keys = ps.getGeneratedKeys()) {
-                            if (!keys.next()) throw new SQLException("Could not create prescription ID.");
-                            prescriptionId = keys.getInt(1);
-                        }
+                int prescriptionId;
+                String prescriptionSql = "INSERT INTO Prescription (patient_id, doctor_id, medication, dosage, frequency, duration, instructions) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = c.prepareStatement(prescriptionSql, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, patient.getPatientId()); ps.setInt(2, doctorId);
+                    ps.setString(3, medication); ps.setString(4, dosage);
+                    ps.setString(5, frequency); ps.setString(6, duration); ps.setString(7, instructions);
+                    ps.executeUpdate();
+                    try (ResultSet keys = ps.getGeneratedKeys()) {
+                        if (!keys.next()) throw new SQLException("Could not create prescription ID.");
+                        prescriptionId = keys.getInt(1);
                     }
                 }
 
@@ -1034,7 +1049,7 @@ private void recordConsultation() {
                     ps.setInt(1, patient.getPatientId()); ps.setInt(2, doctorId);
                     ps.setDate(3, Date.valueOf(consultationDate)); ps.setTime(4, Time.valueOf(consultationTime));
                     ps.setString(5, diagnosis); ps.setString(6, notesArea.getText().trim());
-                    if (prescriptionId == null) ps.setNull(7, Types.INTEGER); else ps.setInt(7, prescriptionId);
+                    ps.setInt(7, prescriptionId);
                     ps.executeUpdate();
                     try (ResultSet keys = ps.getGeneratedKeys()) {
                         if (!keys.next()) throw new SQLException("Could not create consultation ID.");
@@ -1042,14 +1057,12 @@ private void recordConsultation() {
                     }
                 }
 
-                if (hasBill) {
-                    String billingSql = "INSERT INTO Billing (patient_id, consultation_id, amount, date, status) VALUES (?, ?, ?, ?, ?)";
-                    try (PreparedStatement ps = c.prepareStatement(billingSql)) {
-                        ps.setInt(1, patient.getPatientId()); ps.setInt(2, consultationId);
-                        ps.setBigDecimal(3, charge); ps.setDate(4, Date.valueOf(consultationDate));
-                        ps.setString(5, (String) paymentStatusBox.getSelectedItem());
-                        ps.executeUpdate();
-                    }
+                String billingSql = "INSERT INTO Billing (patient_id, consultation_id, amount, date, status) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = c.prepareStatement(billingSql)) {
+                    ps.setInt(1, patient.getPatientId()); ps.setInt(2, consultationId);
+                    ps.setBigDecimal(3, charge); ps.setDate(4, Date.valueOf(consultationDate));
+                    ps.setString(5, (String) paymentStatusBox.getSelectedItem());
+                    ps.executeUpdate();
                 }
 
                 String updateSql = "UPDATE Appointment SET status = ? WHERE appointment_id = ? AND doctor_id = ?";
@@ -1066,9 +1079,8 @@ private void recordConsultation() {
             }
         }
 
-        JOptionPane.showMessageDialog(this, "Consultation saved successfully."
-                + (hasPrescription ? "\nPrescription saved." : "\nNo prescription added.")
-                + (hasBill ? "\nBill generated." : "\nNo bill generated."));
+        JOptionPane.showMessageDialog(this,
+                "Consultation, prescription and bill saved successfully.");
         refreshAll();
     } catch (Exception ex) {
         ex.printStackTrace();
@@ -1352,4 +1364,5 @@ private void addFormRow(JPanel form, GridBagConstraints g, int row, String label
             String.valueOf(totalConsultations));
 }
 }
+
 
