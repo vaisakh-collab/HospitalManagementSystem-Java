@@ -4,6 +4,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
+import java.util.List;
 
 
 public class DoctorDashboard extends JFrame {
@@ -202,18 +203,167 @@ public class DoctorDashboard extends JFrame {
         return panel;
     }
 
-    private void recordConsultation() {
-        int row = new JTable(appointmentModel).getSelectedRow();
+    
+private void recordConsultation() {
+    List<Appointment> appointments =
+            appointmentDAO.getAppointmentsByDoctor(doctorId);
 
-        // The appointment must be selected from the actual table.
+    if (appointments.isEmpty()) {
         JOptionPane.showMessageDialog(
+                this,
+                "There are no appointments available to record a consultation.",
+                "No Appointments",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
+    }
+
+    JComboBox<Appointment> appointmentBox = new JComboBox<>();
+
+    for (Appointment appointment : appointments) {
+        if (appointment.getPatient() != null) {
+            appointmentBox.addItem(appointment);
+        }
+    }
+
+    appointmentBox.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+
+            super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus);
+
+            if (value instanceof Appointment) {
+                Appointment a = (Appointment) value;
+                Patient p = a.getPatient();
+
+                setText(p.getName()
+                        + " | " + a.getDate()
+                        + " " + a.getTime()
+                        + " | Appointment #" + a.getAppointmentId());
+            }
+
+            return this;
+        }
+    });
+
+    JTextField dateField =
+            new JTextField(java.time.LocalDate.now().toString());
+
+    JTextField timeField =
+            new JTextField(java.time.LocalTime.now()
+                    .withSecond(0).withNano(0).toString());
+
+    JTextField diagnosisField = new JTextField();
+    JTextArea notesArea = new JTextArea(5, 25);
+    notesArea.setLineWrap(true);
+    notesArea.setWrapStyleWord(true);
+
+    JPanel form = new JPanel(new GridLayout(0, 2, 8, 8));
+
+    form.add(new JLabel("Appointment / Patient"));
+    form.add(appointmentBox);
+
+    form.add(new JLabel("Date (YYYY-MM-DD)"));
+    form.add(dateField);
+
+    form.add(new JLabel("Time (HH:MM)"));
+    form.add(timeField);
+
+    form.add(new JLabel("Diagnosis"));
+    form.add(diagnosisField);
+
+    form.add(new JLabel("Notes"));
+    form.add(new JScrollPane(notesArea));
+
+    int result = JOptionPane.showConfirmDialog(
             this,
-            "Select an appointment in My Appointments, then use " +
-            "Record Consultation.",
+            form,
             "Record Consultation",
-            JOptionPane.INFORMATION_MESSAGE
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+    );
+
+    if (result != JOptionPane.OK_OPTION) {
+        return;
+    }
+
+    try {
+        Appointment appointment =
+                (Appointment) appointmentBox.getSelectedItem();
+
+        if (appointment == null || appointment.getPatient() == null) {
+            JOptionPane.showMessageDialog(
+                    this, "Select a valid appointment.");
+            return;
+        }
+
+        java.time.LocalDate date =
+                java.time.LocalDate.parse(dateField.getText().trim());
+
+        java.time.LocalTime time =
+                java.time.LocalTime.parse(timeField.getText().trim());
+
+        String diagnosis = diagnosisField.getText().trim();
+        String notes = notesArea.getText().trim();
+
+        if (diagnosis.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this, "Diagnosis cannot be empty.");
+            return;
+        }
+
+        Patient patient = patientDAO.findPatient(
+                appointment.getPatient().getPatientId());
+
+        Doctor doctor = doctorDAO.findDoctor(doctorId);
+
+        if (patient == null || doctor == null) {
+            JOptionPane.showMessageDialog(
+                    this, "Could not load the patient or doctor record.");
+            return;
+        }
+
+        Consultation consultation = new Consultation(
+                0,
+                patient,
+                doctor,
+                date,
+                time,
+                diagnosis,
+                notes,
+                null
+        );
+
+        if (consultationDAO.addConsultation(consultation)) {
+            JOptionPane.showMessageDialog(
+                    this, "Consultation recorded successfully.");
+
+            // Reload the consultation list using your existing method.
+            loadConsultations();
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Could not save the consultation. Check the console.",
+                    "Save Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not record consultation:\n" + ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
         );
     }
+}
+
 
     private void viewSelectedHistory() {
         JOptionPane.showMessageDialog(
