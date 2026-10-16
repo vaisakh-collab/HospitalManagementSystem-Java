@@ -185,23 +185,21 @@ public class DoctorDashboard extends JFrame {
     }
 
     private JPanel buildHistoryTab() {
-        JPanel panel = new JPanel(new BorderLayout(8, 8));
+    JPanel panel = new JPanel(new BorderLayout(8, 8));
+    panel.setBackground(Color.WHITE);
+    panel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        JLabel message = new JLabel(
-            "<html><b>Patient History</b><br><br>" +
-            "Select a patient from your appointments or consultations " +
-            "to view their authorized medical history.</html>"
-        );
-        message.setBorder(new EmptyBorder(25, 25, 25, 25));
+    JButton viewHistory = new JButton("View Patient History");
+    viewHistory.addActionListener(e -> viewSelectedHistory());
 
-        JButton viewHistory = new JButton("View Selected Patient History");
-        viewHistory.addActionListener(e -> viewSelectedHistory());
+    JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    actions.setBackground(Color.WHITE);
+    actions.add(viewHistory);
 
-        panel.add(message, BorderLayout.NORTH);
-        panel.add(viewHistory, BorderLayout.SOUTH);
+    panel.add(actions, BorderLayout.NORTH);
 
-        return panel;
-    }
+    return panel;
+}
 
     
 private void recordConsultation() {
