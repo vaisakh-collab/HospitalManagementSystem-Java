@@ -27,6 +27,10 @@ public class DoctorDashboard extends JFrame {
         "Date", "Time", "Diagnosis", "Notes"
     );
 
+    private final JLabel todayAppointmentsValue = new JLabel("0");
+    private final JLabel totalAppointmentsValue = new JLabel("0");
+    private final JLabel totalConsultationsValue = new JLabel("0");
+
     public DoctorDashboard(UserAccount account) {
         if (account == null
                 || account.getRole() != UserRole.DOCTOR
@@ -92,39 +96,46 @@ public class DoctorDashboard extends JFrame {
     }
 
     private JPanel buildOverviewTab() {
-        JPanel panel = new JPanel(new GridLayout(1, 3, 15, 15));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new EmptyBorder(30, 20, 30, 20));
+    JPanel panel = new JPanel(new GridLayout(1, 3, 15, 15));
+    panel.setBackground(Color.WHITE);
+    panel.setBorder(new EmptyBorder(30, 20, 30, 20));
 
-        panel.add(createStatCard("Today's Appointments", "0"));
-        panel.add(createStatCard("Total Appointments", "0"));
-        panel.add(createStatCard("Total Consultations", "0"));
+    panel.add(createStatCard(
+            "Today's Appointments", todayAppointmentsValue));
 
-        JButton refresh = new JButton("Refresh Overview");
-        refresh.addActionListener(e -> refreshAll());
+    panel.add(createStatCard(
+            "Total Appointments", totalAppointmentsValue));
 
-        JPanel wrapper = new JPanel(new BorderLayout(10, 10));
-        wrapper.add(panel, BorderLayout.CENTER);
-        wrapper.add(refresh, BorderLayout.SOUTH);
-        return wrapper;
-    }
+    panel.add(createStatCard(
+            "Total Consultations", totalConsultationsValue));
 
-    private JPanel createStatCard(String title, String value) {
-        JPanel card = new JPanel(new GridLayout(2, 1, 5, 5));
-        card.setBackground(new Color(235, 242, 252));
-        card.setBorder(new EmptyBorder(20, 10, 20, 10));
+    JButton refresh = new JButton("Refresh Overview");
+    refresh.addActionListener(e -> refreshAll());
 
-        JLabel heading = new JLabel(title, SwingConstants.CENTER);
-        heading.setFont(new Font("SansSerif", Font.BOLD, 14));
+    JPanel wrapper = new JPanel(new BorderLayout(10, 10));
+    wrapper.add(panel, BorderLayout.CENTER);
+    wrapper.add(refresh, BorderLayout.SOUTH);
 
-        JLabel number = new JLabel(value, SwingConstants.CENTER);
-        number.setFont(new Font("SansSerif", Font.BOLD, 28));
-        number.setForeground(new Color(48, 112, 190));
+    return wrapper;
+}
 
-        card.add(heading);
-        card.add(number);
-        return card;
-    }
+    private JPanel createStatCard(String title, JLabel number) {
+    JPanel card = new JPanel(new GridLayout(2, 1, 5, 5));
+    card.setBackground(new Color(235, 242, 252));
+    card.setBorder(new EmptyBorder(20, 10, 20, 10));
+
+    JLabel heading = new JLabel(title, SwingConstants.CENTER);
+    heading.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+    number.setHorizontalAlignment(SwingConstants.CENTER);
+    number.setFont(new Font("SansSerif", Font.BOLD, 28));
+    number.setForeground(new Color(48, 112, 190));
+
+    card.add(heading);
+    card.add(number);
+
+    return card;
+}
 
     private JPanel buildProfileTab() {
         JPanel panel = new JPanel(new GridLayout(0, 2, 12, 12));
@@ -508,6 +519,7 @@ private void recordConsultation() {
     private void refreshAll() {
         loadAppointments();
         loadConsultations();
+        updateOverviewStats();
     }
 
     private void loadAppointments() {
@@ -540,6 +552,7 @@ private void recordConsultation() {
         } catch (Exception ex) {
             showDatabaseError("appointments", ex);
         }
+        updateOverviewStats();
     }
 
     private void loadConsultations() {
@@ -575,6 +588,7 @@ private void recordConsultation() {
         } catch (Exception ex) {
             showDatabaseError("consultations", ex);
         }
+        updateOverviewStats();
     }
 
     private void showDatabaseError(String section, Exception ex) {
@@ -598,4 +612,31 @@ private void recordConsultation() {
             }
         };
     }
+
+    private void updateOverviewStats() {
+    int totalAppointments = appointmentModel.getRowCount();
+    int totalConsultations = consultationModel.getRowCount();
+    int todayAppointments = 0;
+
+    String today = java.time.LocalDate.now().toString();
+
+    for (int i = 0; i < totalAppointments; i++) {
+        Object dateValue = appointmentModel.getValueAt(i, 3);
+
+        if (dateValue != null
+                && today.equals(dateValue.toString())) {
+            todayAppointments++;
+        }
+    }
+
+    todayAppointmentsValue.setText(
+            String.valueOf(todayAppointments));
+
+    totalAppointmentsValue.setText(
+            String.valueOf(totalAppointments));
+
+    totalConsultationsValue.setText(
+            String.valueOf(totalConsultations));
 }
+}
+
