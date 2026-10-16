@@ -3,13 +3,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.sql.ResultSetMetaData;
 
 public class MainWindow extends JFrame {
 
@@ -29,6 +29,8 @@ public class MainWindow extends JFrame {
     private final PatientDAO patientDAO = new PatientDAO();
     private final DoctorDAO doctorDAO = new DoctorDAO();
 
+    private JTextArea reportOutput;
+
     public MainWindow() {
         setTitle("Hospital Management System - Admin");
         setSize(1100, 700);
@@ -40,7 +42,6 @@ public class MainWindow extends JFrame {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(BG);
 
-        // Sidebar
         JPanel sidebar = new JPanel(new BorderLayout());
         sidebar.setPreferredSize(new Dimension(220, 0));
         sidebar.setBackground(NAVY);
@@ -70,8 +71,7 @@ public class MainWindow extends JFrame {
             button.setFocusPainted(false);
             button.setOpaque(true);
             button.setBorder(
-                    BorderFactory.createEmptyBorder(11, 12, 11, 8)
-            );
+                    BorderFactory.createEmptyBorder(11, 12, 11, 8));
 
             button.addActionListener(e -> {
                 cardLayout.show(contentPanel, page);
@@ -94,7 +94,6 @@ public class MainWindow extends JFrame {
 
         sidebar.add(navigation, BorderLayout.CENTER);
 
-        // Top bar
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(Color.WHITE);
         topBar.setBorder(new EmptyBorder(15, 22, 15, 22));
@@ -112,7 +111,6 @@ public class MainWindow extends JFrame {
         topBar.add(adminLabel, BorderLayout.WEST);
         topBar.add(logout, BorderLayout.EAST);
 
-        // Pages
         contentPanel.add(buildDashboard(), "Dashboard");
 
         for (String page : queries.keySet()) {
@@ -169,13 +167,11 @@ public class MainWindow extends JFrame {
                         + "doctor_id, is_active FROM UserAccount");
     }
 
-    // ==================== DASHBOARD ====================
+    // ---------------- Dashboard ----------------
 
     private JPanel buildDashboard() {
         JPanel page = createPage(
-                "Dashboard",
-                "Overview of hospital operations."
-        );
+                "Dashboard", "Overview of hospital operations.");
 
         JPanel stats = new JPanel(new GridLayout(1, 4, 14, 14));
         stats.setOpaque(false);
@@ -195,16 +191,14 @@ public class MainWindow extends JFrame {
                         + "<h2>Hospital Administration</h2>"
                         + "Manage patient and doctor records, appointments, "
                         + "consultations, prescriptions, billing, and "
-                        + "user accounts using the sidebar."
-                        + "</div></html>"
-        );
+                        + "user accounts."
+                        + "</div></html>");
 
         note.setOpaque(true);
         note.setBackground(Color.WHITE);
-
         center.add(note, BorderLayout.CENTER);
-        page.add(center, BorderLayout.CENTER);
 
+        page.add(center, BorderLayout.CENTER);
         return page;
     }
 
@@ -214,8 +208,7 @@ public class MainWindow extends JFrame {
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(
                         new Color(225, 230, 238)),
-                new EmptyBorder(18, 10, 18, 10)
-        ));
+                new EmptyBorder(18, 10, 18, 10)));
 
         JLabel label = new JLabel(title, SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -228,15 +221,13 @@ public class MainWindow extends JFrame {
 
         card.add(label);
         card.add(value);
-
         return card;
     }
 
     private void loadDashboardStats() {
         setStat("patientsCount", "SELECT COUNT(*) FROM Patient");
         setStat("doctorsCount", "SELECT COUNT(*) FROM Doctor");
-        setStat("appointmentsCount",
-                "SELECT COUNT(*) FROM Appointment");
+        setStat("appointmentsCount", "SELECT COUNT(*) FROM Appointment");
         setStat("pendingBillsCount",
                 "SELECT COUNT(*) FROM Billing WHERE status = 'Pending'");
     }
@@ -252,16 +243,13 @@ public class MainWindow extends JFrame {
             }
 
         } catch (Exception ex) {
-            System.err.println(
-                    "Could not load " + key + ": " + ex.getMessage());
-
             updateLabel(contentPanel, key, "—");
+            System.err.println(ex.getMessage());
         }
     }
 
     private void updateLabel(
             Container parent, String key, String value) {
-
         for (Component component : parent.getComponents()) {
             if (component instanceof JLabel
                     && key.equals(component.getName())) {
@@ -274,20 +262,18 @@ public class MainWindow extends JFrame {
         }
     }
 
-    // ==================== RECORD TABLES ====================
+    // ---------------- Tables ----------------
 
     private JPanel buildTablePage(String pageName) {
         JPanel page = createPage(
                 pageName,
                 "Select a record to edit or delete it. "
-                        + "Refresh reloads the database."
-        );
+                        + "Refresh reloads the database.");
 
         DefaultTableModel model =
                 new DefaultTableModel(getColumns(pageName), 0) {
                     @Override
-                    public boolean isCellEditable(
-                            int row, int column) {
+                    public boolean isCellEditable(int row, int column) {
                         return false;
                     }
                 };
@@ -302,8 +288,7 @@ public class MainWindow extends JFrame {
         JButton refresh = new JButton("Refresh");
         refresh.addActionListener(e -> loadTable(pageName));
 
-        JPanel actions = new JPanel(
-                new FlowLayout(FlowLayout.LEFT));
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT));
         actions.setOpaque(false);
         actions.add(refresh);
 
@@ -349,79 +334,49 @@ public class MainWindow extends JFrame {
         center.add(new JScrollPane(table), BorderLayout.CENTER);
 
         page.add(center, BorderLayout.CENTER);
-
         return page;
     }
 
     private String[] getColumns(String page) {
         switch (page) {
             case "Patients":
-                return new String[]{
-                        "Patient ID", "Name", "Age",
-                        "Phone", "Address", "Email"
-                };
-
+                return new String[]{"Patient ID", "Name", "Age",
+                        "Phone", "Address", "Email"};
             case "Doctors":
-                return new String[]{
-                        "Doctor ID", "Name", "Age",
-                        "Phone", "Address", "Email",
-                        "Specialization"
-                };
-
+                return new String[]{"Doctor ID", "Name", "Age",
+                        "Phone", "Address", "Email", "Specialization"};
             case "Appointments":
-                return new String[]{
-                        "Appointment ID", "Patient ID",
-                        "Doctor ID", "Date", "Time", "Status"
-                };
-
+                return new String[]{"Appointment ID", "Patient ID",
+                        "Doctor ID", "Date", "Time", "Status"};
             case "Consultations":
-                return new String[]{
-                        "Consultation ID", "Patient ID",
-                        "Doctor ID", "Date", "Time",
-                        "Diagnosis", "Notes"
-                };
-
+                return new String[]{"Consultation ID", "Patient ID",
+                        "Doctor ID", "Date", "Time", "Diagnosis", "Notes"};
             case "Prescriptions":
-                return new String[]{
-                        "Prescription ID", "Patient ID",
-                        "Doctor ID", "Medication", "Dosage",
-                        "Frequency", "Duration", "Instructions"
-                };
-
+                return new String[]{"Prescription ID", "Patient ID",
+                        "Doctor ID", "Medication", "Dosage", "Frequency",
+                        "Duration", "Instructions"};
             case "Billing":
-                return new String[]{
-                        "Bill ID", "Patient ID",
-                        "Consultation ID", "Amount",
-                        "Date", "Status"
-                };
-
+                return new String[]{"Bill ID", "Patient ID",
+                        "Consultation ID", "Amount", "Date", "Status"};
             default:
-                return new String[]{
-                        "User ID", "Username", "Role",
-                        "Patient ID", "Doctor ID", "Active"
-                };
+                return new String[]{"User ID", "Username", "Role",
+                        "Patient ID", "Doctor ID", "Active"};
         }
     }
 
     private void loadTable(String page) {
         DefaultTableModel model = tableModels.get(page);
-
         if (model == null) {
             return;
         }
 
         model.setRowCount(0);
 
-        // Use the existing DAO implementations for these entities.
         if (page.equals("Patients")) {
             for (Patient p : patientDAO.getAllPatients()) {
                 model.addRow(new Object[]{
-                        p.getPatientId(),
-                        p.getName(),
-                        p.getAge(),
-                        p.getPhone(),
-                        p.getAddress(),
-                        p.getEmail()
+                        p.getPatientId(), p.getName(), p.getAge(),
+                        p.getPhone(), p.getAddress(), p.getEmail()
                 });
             }
             return;
@@ -430,12 +385,8 @@ public class MainWindow extends JFrame {
         if (page.equals("Doctors")) {
             for (Doctor d : doctorDAO.getAllDoctors()) {
                 model.addRow(new Object[]{
-                        d.getDoctorId(),
-                        d.getName(),
-                        d.getAge(),
-                        d.getPhone(),
-                        d.getAddress(),
-                        d.getEmail(),
+                        d.getDoctorId(), d.getName(), d.getAge(),
+                        d.getPhone(), d.getAddress(), d.getEmail(),
                         d.getSpecialization()
                 });
             }
@@ -443,7 +394,6 @@ public class MainWindow extends JFrame {
         }
 
         String sql = queries.get(page);
-
         if (sql == null) {
             return;
         }
@@ -468,15 +418,13 @@ public class MainWindow extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Could not load " + page + ".\n"
-                            + ex.getMessage(),
+                    "Could not load " + page + ".\n" + ex.getMessage(),
                     "Database Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // ==================== PATIENT CRUD ====================
+    // ---------------- Patients CRUD ----------------
 
     private void addPatient() {
         JTextField name = new JTextField();
@@ -486,23 +434,16 @@ public class MainWindow extends JFrame {
         JTextField email = new JTextField();
 
         JPanel form = createForm(
-                new String[]{"Name", "Age", "Phone",
-                        "Address", "Email"},
-                new JTextField[]{name, age, phone, address, email}
-        );
+                new String[]{"Name", "Age", "Phone", "Address", "Email"},
+                new JTextField[]{name, age, phone, address, email});
 
-        int result = JOptionPane.showConfirmDialog(
+        if (JOptionPane.showConfirmDialog(
                 this, form, "Add Patient",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (result != JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
             return;
         }
 
         try {
-            String patientName = required(name.getText(), "Name");
             int patientAge = Integer.parseInt(
                     required(age.getText(), "Age"));
 
@@ -512,20 +453,18 @@ public class MainWindow extends JFrame {
             }
 
             Patient patient = new Patient(
-                    0,
-                    patientName,
+                    required(name.getText(), "Name"),
                     patientAge,
                     phone.getText().trim(),
                     address.getText().trim(),
-                    email.getText().trim()
-            );
+                    email.getText().trim());
 
             if (patientDAO.addPatient(patient)) {
                 success("Patient added successfully.");
                 loadTable("Patients");
                 loadDashboardStats();
             } else {
-                error("Could not add patient. Check the console for details.");
+                error("Could not add patient.");
             }
 
         } catch (NumberFormatException ex) {
@@ -537,7 +476,6 @@ public class MainWindow extends JFrame {
 
     private void editPatient(JTable table) {
         int row = selectedModelRow(table);
-
         if (row == -1) {
             error("Select a patient to edit.");
             return;
@@ -546,51 +484,45 @@ public class MainWindow extends JFrame {
         int id = Integer.parseInt(
                 table.getModel().getValueAt(row, 0).toString());
 
-        Patient existing = patientDAO.findPatient(id);
-
-        if (existing == null) {
-            error("Could not find that patient.");
+        Patient p = patientDAO.findPatient(id);
+        if (p == null) {
+            error("Patient not found.");
             loadTable("Patients");
             return;
         }
 
-        JTextField name = new JTextField(existing.getName());
-        JTextField age = new JTextField(
-                String.valueOf(existing.getAge()));
-        JTextField phone = new JTextField(existing.getPhone());
-        JTextField address = new JTextField(existing.getAddress());
-        JTextField email = new JTextField(existing.getEmail());
+        JTextField name = new JTextField(p.getName());
+        JTextField age = new JTextField(String.valueOf(p.getAge()));
+        JTextField phone = new JTextField(p.getPhone());
+        JTextField address = new JTextField(p.getAddress());
+        JTextField email = new JTextField(p.getEmail());
 
         JPanel form = createForm(
-                new String[]{"Name", "Age", "Phone",
-                        "Address", "Email"},
-                new JTextField[]{name, age, phone, address, email}
-        );
+                new String[]{"Name", "Age", "Phone", "Address", "Email"},
+                new JTextField[]{name, age, phone, address, email});
 
-        int result = JOptionPane.showConfirmDialog(
+        if (JOptionPane.showConfirmDialog(
                 this, form, "Edit Patient #" + id,
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (result != JOptionPane.OK_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
             return;
         }
 
         try {
+            int patientAge = Integer.parseInt(
+                    required(age.getText(), "Age"));
+
+            if (patientAge <= 0) {
+                throw new IllegalArgumentException(
+                        "Age must be greater than zero.");
+            }
+
             Patient updated = new Patient(
                     id,
                     required(name.getText(), "Name"),
-                    Integer.parseInt(required(age.getText(), "Age")),
+                    patientAge,
                     phone.getText().trim(),
                     address.getText().trim(),
-                    email.getText().trim()
-            );
-
-            if (updated.getAge() <= 0) {
-                error("Age must be greater than zero.");
-                return;
-            }
+                    email.getText().trim());
 
             if (patientDAO.updatePatient(updated)) {
                 success("Patient updated successfully.");
@@ -608,7 +540,6 @@ public class MainWindow extends JFrame {
 
     private void deletePatient(JTable table) {
         int row = selectedModelRow(table);
-
         if (row == -1) {
             error("Select a patient to delete.");
             return;
@@ -617,17 +548,13 @@ public class MainWindow extends JFrame {
         int id = Integer.parseInt(
                 table.getModel().getValueAt(row, 0).toString());
 
-        int confirm = JOptionPane.showConfirmDialog(
+        if (JOptionPane.showConfirmDialog(
                 this,
                 "Delete patient #" + id + "?\n"
-                        + "Related records or foreign-key constraints "
-                        + "may prevent deletion.",
+                        + "Related records may prevent deletion.",
                 "Confirm Deletion",
                 JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
-
-        if (confirm != JOptionPane.YES_OPTION) {
+                JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -640,7 +567,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    // ==================== DOCTOR CRUD ====================
+    // ---------------- Doctors CRUD ----------------
 
     private void addDoctor() {
         JTextField name = new JTextField();
@@ -649,21 +576,126 @@ public class MainWindow extends JFrame {
         JTextField address = new JTextField();
         JTextField email = new JTextField();
         JTextField specialization = new JTextField();
+        JTextField username = new JTextField();
+        JPasswordField password = new JPasswordField();
+
+        JPanel form = new JPanel(new GridLayout(0, 2, 10, 10));
+
+        String[] labels = {
+                "Name", "Age", "Phone", "Address", "Email",
+                "Specialization", "Login Username", "Temporary Password"
+        };
+
+        JTextField[] fields = {
+                name, age, phone, address, email,
+                specialization, username, password
+        };
+
+        for (int i = 0; i < labels.length; i++) {
+            form.add(new JLabel(labels[i]));
+            form.add(fields[i]);
+        }
+
+        if (JOptionPane.showConfirmDialog(
+                this, form, "Add Doctor and Login Account",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        char[] passwordChars = password.getPassword();
+
+        try {
+            int doctorAge = Integer.parseInt(
+                    required(age.getText(), "Age"));
+
+            if (doctorAge <= 0) {
+                throw new IllegalArgumentException(
+                        "Age must be greater than zero.");
+            }
+
+            String loginUsername =
+                    required(username.getText(), "Login Username");
+
+            if (passwordChars.length == 0) {
+                error("Password cannot be empty.");
+                return;
+            }
+
+            String loginPassword = new String(passwordChars);
+
+            Doctor doctor = new Doctor(
+                    0,
+                    required(name.getText(), "Name"),
+                    doctorAge,
+                    phone.getText().trim(),
+                    address.getText().trim(),
+                    email.getText().trim(),
+                    required(specialization.getText(), "Specialization"));
+
+            if (doctorDAO.addDoctorWithAccount(
+                    doctor, loginUsername, loginPassword)) {
+
+                success("Doctor and login account created successfully."
+                        + "\nDoctor ID: " + doctor.getDoctorId()
+                        + "\nUsername: " + loginUsername);
+
+                loadTable("Doctors");
+                loadTable("User Accounts");
+                loadDashboardStats();
+
+            } else {
+                error("Could not create the doctor account.");
+            }
+
+        } catch (NumberFormatException ex) {
+            error("Age must be a valid integer.");
+        } catch (IllegalArgumentException ex) {
+            error(ex.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            error("Could not create doctor and login account.\n"
+                    + "Check the console. The username may already exist.");
+        } finally {
+            Arrays.fill(passwordChars, '\0');
+            password.setText("");
+        }
+    }
+
+    private void editDoctor(JTable table) {
+        int row = selectedModelRow(table);
+        if (row == -1) {
+            error("Select a doctor to edit.");
+            return;
+        }
+
+        int id = Integer.parseInt(
+                table.getModel().getValueAt(row, 0).toString());
+
+        Doctor d = doctorDAO.findDoctor(id);
+        if (d == null) {
+            error("Doctor not found.");
+            loadTable("Doctors");
+            return;
+        }
+
+        JTextField name = new JTextField(d.getName());
+        JTextField age = new JTextField(String.valueOf(d.getAge()));
+        JTextField phone = new JTextField(d.getPhone());
+        JTextField address = new JTextField(d.getAddress());
+        JTextField email = new JTextField(d.getEmail());
+        JTextField specialization =
+                new JTextField(d.getSpecialization());
 
         JPanel form = createForm(
                 new String[]{"Name", "Age", "Phone", "Address",
                         "Email", "Specialization"},
                 new JTextField[]{name, age, phone, address,
-                        email, specialization}
-        );
+                        email, specialization});
 
-        int result = JOptionPane.showConfirmDialog(
-                this, form, "Add Doctor",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (result != JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(
+                this, form, "Edit Doctor #" + id,
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
             return;
         }
 
@@ -676,85 +708,6 @@ public class MainWindow extends JFrame {
                         "Age must be greater than zero.");
             }
 
-            Doctor doctor = new Doctor(
-                    0,
-                    required(name.getText(), "Name"),
-                    doctorAge,
-                    phone.getText().trim(),
-                    address.getText().trim(),
-                    email.getText().trim(),
-                    required(specialization.getText(), "Specialization")
-            );
-
-            if (doctorDAO.addDoctor(doctor)) {
-                success("Doctor added successfully.");
-                loadTable("Doctors");
-                loadDashboardStats();
-            } else {
-                error("Could not add doctor.");
-            }
-
-        } catch (NumberFormatException ex) {
-            error("Age must be a valid integer.");
-        } catch (IllegalArgumentException ex) {
-            error(ex.getMessage());
-        }
-    }
-
-    private void editDoctor(JTable table) {
-        int row = selectedModelRow(table);
-
-        if (row == -1) {
-            error("Select a doctor to edit.");
-            return;
-        }
-
-        int id = Integer.parseInt(
-                table.getModel().getValueAt(row, 0).toString());
-
-        Doctor existing = doctorDAO.findDoctor(id);
-
-        if (existing == null) {
-            error("Could not find that doctor.");
-            loadTable("Doctors");
-            return;
-        }
-
-        JTextField name = new JTextField(existing.getName());
-        JTextField age = new JTextField(
-                String.valueOf(existing.getAge()));
-        JTextField phone = new JTextField(existing.getPhone());
-        JTextField address = new JTextField(existing.getAddress());
-        JTextField email = new JTextField(existing.getEmail());
-        JTextField specialization =
-                new JTextField(existing.getSpecialization());
-
-        JPanel form = createForm(
-                new String[]{"Name", "Age", "Phone", "Address",
-                        "Email", "Specialization"},
-                new JTextField[]{name, age, phone, address,
-                        email, specialization}
-        );
-
-        int result = JOptionPane.showConfirmDialog(
-                this, form, "Edit Doctor #" + id,
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-
-        if (result != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        try {
-            int doctorAge = Integer.parseInt(
-                    required(age.getText(), "Age"));
-
-            if (doctorAge <= 0) {
-                error("Age must be greater than zero.");
-                return;
-            }
-
             Doctor updated = new Doctor(
                     id,
                     required(name.getText(), "Name"),
@@ -762,8 +715,7 @@ public class MainWindow extends JFrame {
                     phone.getText().trim(),
                     address.getText().trim(),
                     email.getText().trim(),
-                    required(specialization.getText(), "Specialization")
-            );
+                    required(specialization.getText(), "Specialization"));
 
             if (doctorDAO.updateDoctor(updated)) {
                 success("Doctor updated successfully.");
@@ -781,7 +733,6 @@ public class MainWindow extends JFrame {
 
     private void deleteDoctor(JTable table) {
         int row = selectedModelRow(table);
-
         if (row == -1) {
             error("Select a doctor to delete.");
             return;
@@ -790,17 +741,13 @@ public class MainWindow extends JFrame {
         int id = Integer.parseInt(
                 table.getModel().getValueAt(row, 0).toString());
 
-        int confirm = JOptionPane.showConfirmDialog(
+        if (JOptionPane.showConfirmDialog(
                 this,
                 "Delete doctor #" + id + "?\n"
-                        + "Related appointments or other records "
-                        + "may prevent deletion.",
+                        + "Related records may prevent deletion.",
                 "Confirm Deletion",
                 JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
-
-        if (confirm != JOptionPane.YES_OPTION) {
+                JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -813,73 +760,56 @@ public class MainWindow extends JFrame {
         }
     }
 
-    // ==================== REPORTS ====================
+    // ---------------- Reports ----------------
 
     private JPanel buildReportsPage() {
         JPanel page = createPage(
                 "Reports",
-                "Summary reports generated from hospital database records."
-        );
+                "Summary reports generated from hospital database records.");
+
+        reportOutput = new JTextArea();
+        reportOutput.setEditable(false);
+        reportOutput.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        reportOutput.setMargin(new Insets(10, 10, 10, 10));
+
+        JButton refresh = new JButton("Generate / Refresh Reports");
+        refresh.addActionListener(e -> loadReports());
 
         JPanel content = new JPanel(new BorderLayout(10, 10));
         content.setBackground(Color.WHITE);
         content.setBorder(new EmptyBorder(20, 20, 20, 20));
-
-        JTextArea output = new JTextArea();
-        output.setEditable(false);
-        output.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        output.setMargin(new Insets(10, 10, 10, 10));
-
-        JButton refresh = new JButton("Generate / Refresh Reports");
-        refresh.addActionListener(e -> loadReports(output));
-
         content.add(refresh, BorderLayout.NORTH);
-        content.add(new JScrollPane(output), BorderLayout.CENTER);
+        content.add(new JScrollPane(reportOutput), BorderLayout.CENTER);
 
         page.add(content, BorderLayout.CENTER);
-
-        // Store the report output so navigation can refresh it.
-        reportOutput = output;
-
         return page;
     }
 
-    private JTextArea reportOutput;
-
     private void loadReports() {
-        if (reportOutput != null) {
-            loadReports(reportOutput);
+        if (reportOutput == null) {
+            return;
         }
-    }
 
-    private void loadReports(JTextArea output) {
         StringBuilder report = new StringBuilder();
-
         report.append("HOSPITAL MANAGEMENT SYSTEM REPORTS\n");
         report.append("=================================\n\n");
 
         try (Connection c = DatabaseConnection.getConnection()) {
-
-            report.append("GENERAL SUMMARY\n");
-            report.append("----------------\n");
-            report.append("Total patients: ")
+            report.append("GENERAL SUMMARY\n----------------\n");
+            report.append("Patients: ")
                     .append(count(c, "SELECT COUNT(*) FROM Patient"))
                     .append('\n');
-
-            report.append("Total doctors: ")
+            report.append("Doctors: ")
                     .append(count(c, "SELECT COUNT(*) FROM Doctor"))
                     .append('\n');
-
-            report.append("Total appointments: ")
+            report.append("Appointments: ")
                     .append(count(c, "SELECT COUNT(*) FROM Appointment"))
                     .append('\n');
-
-            report.append("Total consultations: ")
+            report.append("Consultations: ")
                     .append(count(c, "SELECT COUNT(*) FROM Consultation"))
                     .append("\n\n");
 
-            report.append("APPOINTMENT STATUS\n");
-            report.append("------------------\n");
+            report.append("APPOINTMENT STATUS\n------------------\n");
 
             try (PreparedStatement ps = c.prepareStatement(
                     "SELECT status, COUNT(*) AS total "
@@ -894,8 +824,7 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            report.append("\nBILLING SUMMARY\n");
-            report.append("---------------\n");
+            report.append("\nBILLING SUMMARY\n---------------\n");
 
             try (PreparedStatement ps = c.prepareStatement(
                     "SELECT status, COUNT(*) AS total, "
@@ -904,7 +833,7 @@ public class MainWindow extends JFrame {
                  ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
-                    BigDecimal amount = rs.getBigDecimal("amount_total");
+                    Object amount = rs.getObject("amount_total");
 
                     report.append(rs.getString("status"))
                             .append(" | Bills: ")
@@ -915,19 +844,16 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            report.append("\nDOCTOR WORKLOAD\n");
-            report.append("----------------\n");
+            report.append("\nDOCTOR WORKLOAD\n---------------\n");
 
-            String doctorSql =
-                    "SELECT d.doctor_id, d.name, "
-                            + "COUNT(c.consultation_id) AS total "
-                            + "FROM Doctor d LEFT JOIN Consultation c "
-                            + "ON d.doctor_id = c.doctor_id "
-                            + "GROUP BY d.doctor_id, d.name "
-                            + "ORDER BY total DESC";
+            String sql = "SELECT d.doctor_id, d.name, "
+                    + "COUNT(c.consultation_id) AS total "
+                    + "FROM Doctor d LEFT JOIN Consultation c "
+                    + "ON d.doctor_id = c.doctor_id "
+                    + "GROUP BY d.doctor_id, d.name "
+                    + "ORDER BY total DESC";
 
-            try (PreparedStatement ps =
-                         c.prepareStatement(doctorSql);
+            try (PreparedStatement ps = c.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
@@ -941,13 +867,12 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            output.setText(report.toString());
-            output.setCaretPosition(0);
+            reportOutput.setText(report.toString());
+            reportOutput.setCaretPosition(0);
 
         } catch (Exception ex) {
-            output.setText(
-                    "Could not generate reports.\n\n"
-                            + ex.getMessage());
+            reportOutput.setText(
+                    "Could not generate reports.\n" + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -959,7 +884,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    // ==================== SHARED HELPERS ====================
+    // ---------------- Helpers ----------------
 
     private JPanel createForm(
             String[] labels, JTextField[] fields) {
@@ -983,7 +908,6 @@ public class MainWindow extends JFrame {
             return -1;
         }
 
-        // Convert the sorted view row to the underlying model row.
         return table.convertRowIndexToModel(selected);
     }
 
@@ -1025,7 +949,6 @@ public class MainWindow extends JFrame {
 
         heading.add(titleLabel);
         heading.add(descriptionLabel);
-
         page.add(heading, BorderLayout.NORTH);
 
         return page;
