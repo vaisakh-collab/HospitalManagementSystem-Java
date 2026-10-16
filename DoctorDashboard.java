@@ -347,11 +347,27 @@ private void recordConsultation() {
         );
 
         if (consultationDAO.addConsultation(consultation)) {
+            String sql =
+                "UPDATE Appointment SET status = ? " +
+                "WHERE appointment_id = ? AND doctor_id = ?";
+
+            try (Connection c = DatabaseConnection.getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+
+                ps.setString(1, "COMPLETED");
+                ps.setInt(2, appointment.getAppointmentId());
+                ps.setInt(3, doctorId);
+
+                ps.executeUpdate();
+            }
+
             JOptionPane.showMessageDialog(
                     this, "Consultation recorded successfully.");
 
-            // Reload the consultation list using your existing method.
+            loadAppointments();
             loadConsultations();
+            updateOverviewStats();
+
         } else {
             JOptionPane.showMessageDialog(
                     this,
