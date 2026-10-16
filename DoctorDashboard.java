@@ -366,13 +366,146 @@ private void recordConsultation() {
 
 
     private void viewSelectedHistory() {
+    List<Appointment> appointments =
+            appointmentDAO.getAppointmentsByDoctor(doctorId);
+
+    if (appointments == null || appointments.isEmpty()) {
         JOptionPane.showMessageDialog(
-            this,
-            "Select a patient from My Appointments to view their history.",
-            "Patient History",
-            JOptionPane.INFORMATION_MESSAGE
+                this,
+                "You have no appointments to select a patient from.",
+                "No Patients",
+                JOptionPane.INFORMATION_MESSAGE
         );
+        return;
     }
+
+    // Get unique patients from the doctor's appointments.
+    java.util.Map<Integer, Patient> patients =
+            new java.util.LinkedHashMap<>();
+
+    for (Appointment appointment : appointments) {
+        if (appointment == null || appointment.getPatient() == null) {
+            continue;
+        }
+
+        Patient patient = appointment.getPatient();
+        patients.putIfAbsent(patient.getPatientId(), patient);
+    }
+
+    if (patients.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No patients were found in your appointments.",
+                "No Patients",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
+    }
+
+    JComboBox<Patient> patientBox = new JComboBox<>(
+            patients.values().toArray(new Patient[0])
+    );
+
+    patientBox.setRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+
+            super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus
+            );
+
+            if (value instanceof Patient) {
+                Patient patient = (Patient) value;
+                setText(
+                        patient.getName()
+                        + " (Patient ID: "
+                        + patient.getPatientId() + ")"
+                );
+            }
+
+            return this;
+        }
+    });
+
+    JPanel selectionPanel = new JPanel(new BorderLayout(8, 8));
+    selectionPanel.add(
+            new JLabel("Select a patient:"),
+            BorderLayout.NORTH
+    );
+    selectionPanel.add(patientBox, BorderLayout.CENTER);
+
+    int result = JOptionPane.showConfirmDialog(
+            this,
+            selectionPanel,
+            "View Patient History",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+    );
+
+    if (result != JOptionPane.OK_OPTION) {
+        return;
+    }
+
+    Patient selectedPatient = (Patient) patientBox.getSelectedItem();
+
+    if (selectedPatient == null) {
+        return;
+    }
+
+    // Load the patient's medical history.
+    List<Consultation> history =
+            patientDAO.getMedicalHistory(
+                    selectedPatient.getPatientId()
+            );
+
+    if (history == null || history.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No medical history found for "
+                        + selectedPatient.getName() + ".",
+                "Medical History",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
+    }
+
+    DefaultTableModel historyModel = createModel(
+            "Consultation ID",
+            "Date",
+            "Time",
+            "Diagnosis",
+            "Notes"
+    );
+
+    for (Consultation consultation : history) {
+        historyModel.addRow(new Object[]{
+                consultation.getConsultationId(),
+                consultation.getDate(),
+                consultation.getTime(),
+                consultation.getDiagnosis(),
+                consultation.getNotes()
+        });
+    }
+
+    JTable historyTable = new JTable(historyModel);
+    historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    historyTable.setFillsViewportHeight(true);
+
+    JScrollPane scrollPane = new JScrollPane(historyTable);
+    scrollPane.setPreferredSize(new Dimension(750, 300));
+
+    JOptionPane.showMessageDialog(
+            this,
+            scrollPane,
+            "Medical History — " + selectedPatient.getName(),
+            JOptionPane.INFORMATION_MESSAGE
+    );
+}
 
     private void refreshAll() {
         loadAppointments();
