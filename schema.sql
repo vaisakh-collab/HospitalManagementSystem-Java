@@ -47,7 +47,6 @@ CREATE TABLE Appointment (
     FOREIGN KEY (doctor_id) REFERENCES Doctor(doctor_id)
 );
 
-
 CREATE TABLE Consultation (
     consultation_id INT PRIMARY KEY AUTO_INCREMENT,
     patient_id INT NOT NULL,
@@ -61,15 +60,15 @@ CREATE TABLE Consultation (
 
     CONSTRAINT fk_consultation_patient
         FOREIGN KEY (patient_id)
-        REFERENCES patient(patient_id),
+        REFERENCES Patient(patient_id),
 
     CONSTRAINT fk_consultation_doctor
         FOREIGN KEY (doctor_id)
-        REFERENCES doctor(doctor_id),
+        REFERENCES Doctor(doctor_id),
 
     CONSTRAINT fk_consultation_prescription
         FOREIGN KEY (prescription_id)
-        REFERENCES prescription(prescription_id)
+        REFERENCES Prescription(prescription_id)
 );
 CREATE TABLE Billing (
     bill_id INT PRIMARY KEY AUTO_INCREMENT,
