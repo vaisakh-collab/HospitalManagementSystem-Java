@@ -273,7 +273,7 @@ public class PatientDashboard extends JFrame {
 
             String status = billModel.getValueAt(selectedRow, 4).toString();
 
-            if (!"Pending".equalsIgnoreCase(status)) {
+            if (!"UNPAID".equalsIgnoreCase(status)) {
                 JOptionPane.showMessageDialog(
                         this, "This bill is not pending.");
                 return;
