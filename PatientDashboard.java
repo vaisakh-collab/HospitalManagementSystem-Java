@@ -65,7 +65,7 @@ public class PatientDashboard extends JFrame {
         tabs.addTab("My Appointments", buildAppointmentsTab());
         tabs.addTab("Medical History", tablePanel(historyModel));
         tabs.addTab("My Prescriptions", tablePanel(prescriptionModel));
-        tabs.addTab("My Bills", tablePanel(billModel));
+        tabs.addTab("My Bills", buildBillsTab());
         root.add(tabs, BorderLayout.CENTER);
 
         setContentPane(root);
@@ -246,6 +246,88 @@ public class PatientDashboard extends JFrame {
                 p.getDosage(), p.getFrequency(), p.getDuration(), p.getInstructions()});
         }
     }
+
+
+private JPanel buildBillsTab() {
+    JPanel panel = new JPanel(new BorderLayout(8, 8));
+
+    JTable billTable = new JTable(billModel);
+    billTable.setAutoCreateRowSorter(true);
+
+    JButton payButton = new JButton("Pay Bill");
+    JButton refreshButton = new JButton("Refresh");
+
+    payButton.addActionListener(e -> {
+        int selectedRow = billTable.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    this, "Please select a bill to pay.");
+            return;
+        }
+
+        selectedRow = billTable.convertRowIndexToModel(selectedRow);
+
+        int billId = Integer.parseInt(
+                billModel.getValueAt(selectedRow, 0).toString());
+
+        String status = billModel.getValueAt(selectedRow, 4).toString();
+
+        if (!"Pending".equalsIgnoreCase(status)) {
+            JOptionPane.showMessageDialog(
+                    this, "This bill is not pending.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Confirm payment for Bill ID " + billId + "?",
+                "Confirm Payment",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String sql = "UPDATE Billing SET status = 'Paid' "
+                + "WHERE bill_id = ? AND patient_id = ? "
+                + "AND status = 'Pending'";
+
+        try (Connection c = DatabaseConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, billId);
+            ps.setInt(2, patientId);
+
+            if (ps.executeUpdate() == 1) {
+                JOptionPane.showMessageDialog(
+                        this, "Bill marked as paid successfully.");
+                loadBills();
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Payment could not be updated. Refresh and try again.");
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this, "Could not update payment status.");
+        }
+    });
+
+    refreshButton.addActionListener(e -> loadBills());
+
+    JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    buttons.add(payButton);
+    buttons.add(refreshButton);
+
+    panel.add(buttons, BorderLayout.NORTH);
+    panel.add(new JScrollPane(billTable), BorderLayout.CENTER);
+
+    return panel;
+}
+
 
     private void loadBills() {
         billModel.setRowCount(0);
