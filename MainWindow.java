@@ -229,7 +229,7 @@ public class MainWindow extends JFrame {
         setStat("doctorsCount", "SELECT COUNT(*) FROM Doctor");
         setStat("appointmentsCount", "SELECT COUNT(*) FROM Appointment");
         setStat("pendingBillsCount",
-                "SELECT COUNT(*) FROM Billing WHERE status = 'Pending'");
+                "SELECT COUNT(*) FROM Billing WHERE status = 'UNPAID'");
     }
 
     private void setStat(String key, String sql) {
