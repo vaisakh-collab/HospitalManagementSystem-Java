@@ -149,12 +149,9 @@ public class DoctorDashboard extends JFrame {
         panel.add(new JLabel("Username:"));
         panel.add(new JLabel(account.getUsername()));
 
-        panel.add(new JLabel("Role:"));
-        panel.add(new JLabel("Doctor"));
-
-        panel.add(new JLabel("Profile details:"));
+        panel.add(new JLabel("Specialization:"));
         panel.add(new JLabel(
-            "Additional details can be loaded from the Doctor record."
+            doctorDAO.findDoctor(doctorId).getSpecialization()
         ));
 
         return panel;
