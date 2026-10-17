@@ -265,10 +265,15 @@ public class MainWindow extends JFrame {
     // ---------------- Tables ----------------
 
     private JPanel buildTablePage(String pageName) {
-        JPanel page = createPage(
-                pageName,
-                "Select a record to edit or delete it. "
-                        + "Refresh reloads the database.");
+        String description = "";
+
+        if (pageName.equals("Patients") || pageName.equals("Doctors")) {
+            description = "Select a record to edit. Refresh reloads the database.";
+        } else {
+            description = "Refresh reloads the database.";
+        }
+
+        JPanel page = createPage(pageName, description);
 
         DefaultTableModel model =
                 new DefaultTableModel(getColumns(pageName), 0) {
