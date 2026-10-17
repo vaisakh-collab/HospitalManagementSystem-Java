@@ -303,6 +303,28 @@ public class PatientDAO {
         return null;
     }
 
+
+public List<Patient> getAllPatients() {
+    List<Patient> patients = new ArrayList<>();
+
+    String sql = "SELECT * FROM Patient";
+
+    try (Connection c = DatabaseConnection.getConnection();
+         PreparedStatement ps = c.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            patients.add(map(rs));
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return patients;
+}
+
+
     private Patient map(ResultSet rs) throws SQLException {
 
         return new Patient(

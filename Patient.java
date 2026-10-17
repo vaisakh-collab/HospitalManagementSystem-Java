@@ -1,4 +1,4 @@
-import java.util.List;
+
 public class Patient extends Person {
   private int patientId;
 
@@ -21,16 +21,5 @@ public class Patient extends Person {
     return this.patientId;
   }
 
-  public List<Consultation> viewMedicalHistory(){
-    return null;
-  }
-
-  public List<Appointment> viewAppointments(){
-    return null;
-  }
-
-  public List<Prescription> viewPrescriptions(){
-    return null;
-  }
 }
   
