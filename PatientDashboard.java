@@ -11,7 +11,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class PatientDashboard extends JFrame {
-    private final UserAccount account;
+
     private final int patientId;
     private final PatientDAO patientDAO = new PatientDAO();
     private final AppointmentDAO appointmentDAO = new AppointmentDAO();
@@ -27,7 +27,7 @@ public class PatientDashboard extends JFrame {
         if (account == null || account.getRole() != UserRole.PATIENT || account.getPatientId() == null) {
             throw new IllegalArgumentException("A linked patient account is required.");
         }
-        this.account = account;
+
         this.patientId = account.getPatientId();
 
         setTitle("Patient Dashboard");

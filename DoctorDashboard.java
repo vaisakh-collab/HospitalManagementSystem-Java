@@ -15,7 +15,6 @@ public class DoctorDashboard extends JFrame {
 
     private final DoctorDAO doctorDAO = new DoctorDAO();
     private final AppointmentDAO appointmentDAO = new AppointmentDAO();
-    private final ConsultationDAO consultationDAO = new ConsultationDAO();
     private final PatientDAO patientDAO = new PatientDAO();
 
     private final DefaultTableModel appointmentModel = createModel(
