@@ -297,7 +297,6 @@ public class MainWindow extends JFrame {
 
             JButton add = new JButton("Add");
             JButton edit = new JButton("Edit");
-            JButton delete = new JButton("Delete");
 
             add.addActionListener(e -> {
                 if (pageName.equals("Patients")) {
@@ -315,17 +314,9 @@ public class MainWindow extends JFrame {
                 }
             });
 
-            delete.addActionListener(e -> {
-                if (pageName.equals("Patients")) {
-                    deletePatient(table);
-                } else {
-                    deleteDoctor(table);
-                }
-            });
 
             actions.add(add);
             actions.add(edit);
-            actions.add(delete);
         }
 
         JPanel center = new JPanel(new BorderLayout(8, 8));
@@ -538,34 +529,6 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void deletePatient(JTable table) {
-        int row = selectedModelRow(table);
-        if (row == -1) {
-            error("Select a patient to delete.");
-            return;
-        }
-
-        int id = Integer.parseInt(
-                table.getModel().getValueAt(row, 0).toString());
-
-        if (JOptionPane.showConfirmDialog(
-                this,
-                "Delete patient #" + id + "?\n"
-                        + "Related records may prevent deletion.",
-                "Confirm Deletion",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
-            return;
-        }
-
-        if (patientDAO.deletePatient(id)) {
-            success("Patient deleted successfully.");
-            loadTable("Patients");
-            loadDashboardStats();
-        } else {
-            error("Could not delete patient. Related records may exist.");
-        }
-    }
 
     // ---------------- Doctors CRUD ----------------
 
@@ -731,34 +694,6 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void deleteDoctor(JTable table) {
-        int row = selectedModelRow(table);
-        if (row == -1) {
-            error("Select a doctor to delete.");
-            return;
-        }
-
-        int id = Integer.parseInt(
-                table.getModel().getValueAt(row, 0).toString());
-
-        if (JOptionPane.showConfirmDialog(
-                this,
-                "Delete doctor #" + id + "?\n"
-                        + "Related records may prevent deletion.",
-                "Confirm Deletion",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
-            return;
-        }
-
-        if (doctorDAO.deleteDoctor(id)) {
-            success("Doctor deleted successfully.");
-            loadTable("Doctors");
-            loadDashboardStats();
-        } else {
-            error("Could not delete doctor. Related records may exist.");
-        }
-    }
 
     // ---------------- Reports ----------------
 
