@@ -313,7 +313,6 @@ public class MainWindow extends JFrame {
             });
 
 
-            actions.add(add);
             actions.add(edit);
         }
 
