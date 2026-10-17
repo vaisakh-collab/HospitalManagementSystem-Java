@@ -29,8 +29,6 @@ public class MainWindow extends JFrame {
     private final PatientDAO patientDAO = new PatientDAO();
     private final DoctorDAO doctorDAO = new DoctorDAO();
 
-    private JTextArea reportOutput;
-
     public MainWindow() {
         setTitle("Hospital Management System - Admin");
         setSize(1100, 700);
@@ -59,7 +57,7 @@ public class MainWindow extends JFrame {
         String[] pages = {
                 "Dashboard", "Patients", "Doctors", "Appointments",
                 "Consultations", "Prescriptions", "Billing",
-                "User Accounts", "Reports"
+                "User Accounts"
         };
 
         for (String page : pages) {
@@ -84,9 +82,6 @@ public class MainWindow extends JFrame {
                     loadDashboardStats();
                 }
 
-                if (page.equals("Reports")) {
-                    loadReports();
-                }
             });
 
             navigation.add(button);
@@ -116,8 +111,6 @@ public class MainWindow extends JFrame {
         for (String page : queries.keySet()) {
             contentPanel.add(buildTablePage(page), page);
         }
-
-        contentPanel.add(buildReportsPage(), "Reports");
 
         JPanel main = new JPanel(new BorderLayout());
         main.add(topBar, BorderLayout.NORTH);
@@ -699,130 +692,6 @@ public class MainWindow extends JFrame {
         }
     }
 
-
-    // ---------------- Reports ----------------
-
-    private JPanel buildReportsPage() {
-        JPanel page = createPage(
-                "Reports",
-                "Summary reports generated from hospital database records.");
-
-        reportOutput = new JTextArea();
-        reportOutput.setEditable(false);
-        reportOutput.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        reportOutput.setMargin(new Insets(10, 10, 10, 10));
-
-        JButton refresh = new JButton("Generate / Refresh Reports");
-        refresh.addActionListener(e -> loadReports());
-
-        JPanel content = new JPanel(new BorderLayout(10, 10));
-        content.setBackground(Color.WHITE);
-        content.setBorder(new EmptyBorder(20, 20, 20, 20));
-        content.add(refresh, BorderLayout.NORTH);
-        content.add(new JScrollPane(reportOutput), BorderLayout.CENTER);
-
-        page.add(content, BorderLayout.CENTER);
-        return page;
-    }
-
-    private void loadReports() {
-        if (reportOutput == null) {
-            return;
-        }
-
-        StringBuilder report = new StringBuilder();
-        report.append("HOSPITAL MANAGEMENT SYSTEM REPORTS\n");
-        report.append("=================================\n\n");
-
-        try (Connection c = DatabaseConnection.getConnection()) {
-            report.append("GENERAL SUMMARY\n----------------\n");
-            report.append("Patients: ")
-                    .append(count(c, "SELECT COUNT(*) FROM Patient"))
-                    .append('\n');
-            report.append("Doctors: ")
-                    .append(count(c, "SELECT COUNT(*) FROM Doctor"))
-                    .append('\n');
-            report.append("Appointments: ")
-                    .append(count(c, "SELECT COUNT(*) FROM Appointment"))
-                    .append('\n');
-            report.append("Consultations: ")
-                    .append(count(c, "SELECT COUNT(*) FROM Consultation"))
-                    .append("\n\n");
-
-            report.append("APPOINTMENT STATUS\n------------------\n");
-
-            try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT status, COUNT(*) AS total "
-                            + "FROM Appointment GROUP BY status");
-                 ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    report.append(rs.getString("status"))
-                            .append(": ")
-                            .append(rs.getInt("total"))
-                            .append('\n');
-                }
-            }
-
-            report.append("\nBILLING SUMMARY\n---------------\n");
-
-            try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT status, COUNT(*) AS total, "
-                            + "SUM(amount) AS amount_total "
-                            + "FROM Billing GROUP BY status");
-                 ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    Object amount = rs.getObject("amount_total");
-
-                    report.append(rs.getString("status"))
-                            .append(" | Bills: ")
-                            .append(rs.getInt("total"))
-                            .append(" | Amount: ")
-                            .append(amount == null ? "0.00" : amount)
-                            .append('\n');
-                }
-            }
-
-            report.append("\nDOCTOR WORKLOAD\n---------------\n");
-
-            String sql = "SELECT d.doctor_id, d.name, "
-                    + "COUNT(c.consultation_id) AS total "
-                    + "FROM Doctor d LEFT JOIN Consultation c "
-                    + "ON d.doctor_id = c.doctor_id "
-                    + "GROUP BY d.doctor_id, d.name "
-                    + "ORDER BY total DESC";
-
-            try (PreparedStatement ps = c.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    report.append("Dr. ")
-                            .append(rs.getString("name"))
-                            .append(" (ID ")
-                            .append(rs.getInt("doctor_id"))
-                            .append("): ")
-                            .append(rs.getInt("total"))
-                            .append(" consultations\n");
-                }
-            }
-
-            reportOutput.setText(report.toString());
-            reportOutput.setCaretPosition(0);
-
-        } catch (Exception ex) {
-            reportOutput.setText(
-                    "Could not generate reports.\n" + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    private int count(Connection c, String sql) throws Exception {
-        try (PreparedStatement ps = c.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            return rs.next() ? rs.getInt(1) : 0;
-        }
-    }
 
     // ---------------- Helpers ----------------
 
