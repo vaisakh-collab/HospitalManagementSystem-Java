@@ -312,7 +312,9 @@ public class MainWindow extends JFrame {
                 }
             });
 
-
+            if (!pageName.equals("Patients")) {
+                actions.add(add);
+            }
             actions.add(edit);
         }
 
