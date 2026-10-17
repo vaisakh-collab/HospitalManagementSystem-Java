@@ -220,7 +220,7 @@ public class MainWindow extends JFrame {
     private void loadDashboardStats() {
         setStat("patientsCount", "SELECT COUNT(*) FROM Patient");
         setStat("doctorsCount", "SELECT COUNT(*) FROM Doctor");
-        setStat("appointmentsCount", "SELECT COUNT(*) FROM Appointment");
+        setStat("appointmentsCount", "SELECT COUNT(*) FROM Appointment WHERE status = 'SCHEDULED'");
         setStat("pendingBillsCount",
                 "SELECT COUNT(*) FROM Billing WHERE status = 'UNPAID'");
     }
